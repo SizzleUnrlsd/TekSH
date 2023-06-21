@@ -26,7 +26,7 @@
     #define SHELL_ENV shell->built_shell_type_env
     #define ENV_SET_ARRAY shell->set_env->env_array
     #define FULL_ARRAY_ENV shell->set_env->env_array
-    #define PATH_HISTORY_FILE "42sh_history"
+    #define PATH_HISTORY_FILE "teksh_history"
 
     #define ERROR_SET_UNSET_FIRST_DOLLAR "unsetenv: \
 Variable name must begin with a letter."
