@@ -1,0 +1,158 @@
+/*
+* {{ project }}
+* Copyright (C) {{ year }}  {{ organization }}
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "shell.h"
+
+volatile sig_atomic_t interrupt_flag = 0;
+
+static volatile sig_atomic_t keep_running = 1;
+
+char *detail = NULL;
+
+int load_history(const char *filename)
+{
+    return read_history(filename);
+}
+
+int save_history(const char *filename)
+{
+    return write_history(filename);
+}
+
+char **command_completion(const char *text, int start, int end)
+{
+    (void) start;
+    (void) end;
+    return rl_completion_matches(text, rl_filename_completion_function);
+}
+
+char *
+get_dir(void)
+{
+    char cwd[1024];
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        return strdup(cwd);
+    } else {
+        return "UNDEFINE";
+    }
+
+    return 0;
+}
+
+static char *concat_str(const char *str1, const char *str2, ...)
+{
+    va_list args;
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+
+    char *result = (char *)malloc(sizeof(char) * (len1 + len2 + 1));
+    if (!result) {
+        exit(EXIT_FAILURE);
+    }
+    strcpy(result, str1);
+    strcat(result, str2);
+
+    va_start(args, str2);
+    const char *str;
+    while ((str = va_arg(args, const char *)) != NULL) {
+        size_t len = strlen(str);
+        result = (char *)realloc(result, sizeof(char) * (len1 + len2 + len + 1));
+        if (!result) {
+            exit(EXIT_FAILURE);
+        }
+        strcat(result, str);
+        len1 += len;
+    }
+    va_end(args);
+
+    return result;
+}
+
+char *set_promt(void)
+{
+    char prompt[256] = {0};
+    char *reset = "\033[0m";
+    char start = '{';
+    char end = '}';
+    if (strcmp("UNDEFINE", getgit_branch()) != 0)
+        sprintf(prompt, "\033[1;34m%c \033[1;31m%s\033[0m \033[1;34m%c %s", start, getgit_branch(), end, reset);
+
+    char *detail = concat_str("\033[0;34m[", reset, get_dir(), "\033[0;34m]", reset, prompt, NULL);
+    return strdup(detail);
+}
+
+void inthand(int32_t signum __attribute__((unused)))
+{
+    rl_free_line_state();
+    rl_cleanup_after_signal();
+    _print("\n");
+    _print(ANSI_BOLD_ON);
+    _print(ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET);
+    _print(detail);
+    fflush(stdout);
+}
+
+int32_t prompt_shell(shell_t *shell)
+{
+    signal(SIGINT, inthand);
+    struct termios old_termios, new_termios;
+    tcgetattr(STDIN_FILENO, &old_termios);
+    new_termios = old_termios;
+    new_termios.c_lflag &= ~ECHOCTL;
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_termios);
+
+    static int first_call = 1;
+    if (first_call) {
+        first_call = 0;
+        load_history("history.txt");
+        rl_attempted_completion_function = command_completion;
+    }
+    
+    char *line = NULL;
+    detail = set_promt();
+    do {
+        if (shell->status == 0) {
+            _print(ANSI_BOLD_ON);
+            _print(ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET);
+        } else {
+            _print(ANSI_BOLD_ON);
+            _print(ANSI_COLOR_RED "•" ANSI_COLOR_RESET);
+        }
+        line = readline(detail);
+        if (!line) {
+            return 42;
+        }
+        garbage_collector(line, shell);
+        if (errno == EINTR) {
+            continue;
+        }
+        if (strcmp(line, "\0") == 0) {
+            shell->status = 0;
+            continue;
+        }
+        if (line && *line) {
+            add_history(line);
+            shell->get_line = line;
+            ENV_PATH = cut_path_env(shell, ENV_SET_ARRAY);
+            save_history("history.txt");
+        } else if (line) {
+            print_str(detail, 0, RD_TTY, 1);
+        }
+    } while (!line || !*line);
+    return 0;
+}
+
