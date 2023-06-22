@@ -109,7 +109,7 @@ check_current_version(const char *version)
 
     FILE *file = fopen(filename, "r");
     if (!file) {
-        return !!_FILE_ERROR;
+        return !_FILE_ERROR;
     }
 
     char line[256];
