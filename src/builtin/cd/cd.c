@@ -47,7 +47,9 @@ build_cd_foo_extend(shell_t *shell, char **arg, char *home, int32_t len_arg)
     ((_strcmp(arg[1], "~") == 0) && home != NULL)) {
         shell->cd_old_path = getcwd(NULL, 4096);
         garbage_collector(shell->cd_old_path, shell);
-        chdir(home);
+        if (chdir(home) == -1) {
+            EXIT_W_ECHO_ERROR_("cd: Can't change to home directory.", 1);
+        }
         shell->cd_new_path = home;
         set_new_old_pwd(shell, shell->cd_old_path, "setenv OLDPWD");
         set_new_old_pwd(shell, home, "setenv PWD");
@@ -89,7 +91,9 @@ build_cd_bar(shell_t *shell, char **arg)
             char *path = getcwd(NULL, 4096);
             garbage_collector(path, shell);
             set_new_old_pwd(shell, path, "setenv OLDPWD");
-            chdir(shell->cd_old_path);
+            if (chdir(shell->cd_old_path) == -1) {
+                EXIT_W_ECHO_ERROR_("chdir: Error.", 1);
+            }
             shell->cd_old_path = shell->cd_new_path;
             shell->cd_new_path = getcwd(NULL, 4096);
             garbage_collector(shell->cd_new_path, shell);

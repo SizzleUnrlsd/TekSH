@@ -29,7 +29,9 @@ display_history(shell_t *shell, char *str)
     char *temp = malloc_attribut(sizeof(char) * (size + 1), shell);
     if (read(fd, temp, size) == -1)
         return 1;
-    write(1, temp, size);
+    if (write(1, temp, size) == -1) {
+        return !!_WRITE_ERROR;
+    }
     temp[size] = '\0';
     close(fd);
     free_attribut(temp, shell);

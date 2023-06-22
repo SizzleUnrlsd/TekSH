@@ -40,7 +40,9 @@ int execute_command_exclamation(int *read, int *nb, shell_t *shell)
     if (*read != -1) {
         char *cmd = recup_command(&*nb, shell);
         _printf("%s\n", cmd);
-        system(cmd);
+        if (system(cmd) == -1) {
+            return !!_FORK_ERROR;
+        }
     }
     return 0;
 }
@@ -80,7 +82,9 @@ builtin_exclamation(shell_t *shell)
         int cmd_num = atoi(exclamation + 1);
         if (exclamation != NULL && cmd_num == 0) {
             printf("%s\n", exclamation + 1);
-            system(exclamation + 1);
+            if (system(exclamation + 1) == -1) {
+                return UPDATE_FAILURE_STATUS;
+            }
         }
         if (exclamation != NULL && cmd_num >= 0)
             future_shell_value = find_in_file(shell, cmd_num);

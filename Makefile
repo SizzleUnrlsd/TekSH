@@ -15,13 +15,16 @@ OBJ	=	$(SRC:.c=.o) $(PLUG:.c=.o)
 
 NAME	=	teksh
 
-CFLAGS 	=	-W -Wall -Wextra -Werror -pedantic -g3 -Os -I./include/ -lreadline -lncurses
+CFLAGS 	=	-W -Wall -Wextra -Werror -pedantic -g3 -Os -I./include/
 
-MEMORY_FLAG	=	-Wpadded
+LDLIBS = -lreadline -lncurses -ldl
+
+MEMORY_FLAG	=	-Wpadded -fsanitize=address -fstack-protector-strong -fPIE -fmerge-all-constants
 
 NODEADCODE	=	-fdata-sections -ffunction-sections -Wl,--gc-sections
 
 UNAME_S := $(shell uname -s)
+
 ifeq ($(UNAME_S),Darwin)
 	ARCH := $(shell uname -p)
 else
@@ -49,7 +52,7 @@ TEST_SRC =	$(shell find ./src -name "*.c" -not -name "sh.c") \
 	$(shell find ./tests -name "*.c")
 
 all	:	$(OBJ)
-	$(CC) -o $(NAME) $(CFLAGS) $(SRC) $(PLUG) $(MEMORY_FLAG)
+	$(CC) -o $(NAME) $(CFLAGS) $(SRC) $(PLUG) $(LDLIBS)
 	make -C plugins/add_ons/
 
 clean	:
