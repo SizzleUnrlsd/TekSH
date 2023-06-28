@@ -1,21 +1,25 @@
 /**
-* {{ project }}
-* Copyright (C) {{ year }}  {{ organization }}
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2023 hugo
+ * 
+ * This file is part of TekSH.
+ * 
+ * TekSH is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * TekSH is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with TekSH.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "shell.h"
+
+static shell_t *_global_shell;
 
 char *get_readme_from_github(const char* repo_owner, const char* repo_name)
 {
@@ -25,14 +29,15 @@ char *get_readme_from_github(const char* repo_owner, const char* repo_name)
     char _buf[128] = {0};
     char _buf_url[256] = {0};
     char _buf_command[512] = {0};
-    char *output = NULL;
-    size_t output_size = 0;
-    size_t buffer_size = 0;
+    char *output = DEFAULT(output);
+    size_t output_size = DEFAULT(output_size);
+    size_t buffer_size = DEFAULT(buffer_size);
+    FILE* fp = DEFAULT(fp);
 
     snprintf(_buf_url, sizeof(_buf_url), endpoint, repo_owner, repo_name);
     snprintf(_buf_command, sizeof(_buf_command), "curl -s %s%s", base_url, _buf_url);
 
-    FILE* fp = popen(_buf_command, "r");
+    fp = popen(_buf_command, "r");
     if (!fp) {
         return NULL;
     }
@@ -74,6 +79,7 @@ find_version(const char *_buf)
 void
 update_services(void)
 {
+    char *input = DEFAULT(input);
     char const *_buf =
                 "████████╗███████╗██╗  ██╗███████╗██╗  ██╗\n"
                 "╚══██╔══╝██╔════╝██║ ██╔╝██╔════╝██║  ██║\n"
@@ -87,7 +93,7 @@ update_services(void)
     _print("You're not up to date,\n\
 Update to the latest version? Y / n\n");
 
-    char *input = readline("$> ");
+    input = readline("$> ");
     if (!input || !*input) {
         return;
     }
@@ -106,16 +112,18 @@ int
 check_current_version(const char *version)
 {
     const char *filename = "setup/shell.conf";
+    char line[256] = {0};
+    char *current_version = DEFAULT(current_version);
+    int32_t result = DEFAULT(result);
 
     FILE *file = fopen(filename, "r");
     if (!file) {
         return !_FILE_ERROR;
     }
 
-    char line[256];
     while (fgets(line, 256, file) != NULL) {
         if (strstr(line, "version =") != NULL) {
-            char *current_version = strchr(line, '=');
+            current_version = strchr(line, '=');
             if (current_version != NULL) {
                 current_version++;
                 while (*current_version == ' ' || *current_version == '\t') {
@@ -123,7 +131,7 @@ check_current_version(const char *version)
                 }
                 current_version[strcspn(current_version, "\r\n")] = '\0';
 
-                int32_t result = strncmp(current_version, version, 5);
+                result = strncmp(current_version, version, 5);
                 if (result == 0) {
                     return 0;
                 } else {
@@ -138,14 +146,16 @@ check_current_version(const char *version)
     return 0;
 }
 
-int check_version(void)
+int check_version(shell_t *_shell)
 {
-    const char *version = NULL;
+    const char *version = DEFAULT(version);
     char *readme = get_readme_from_github("SizzleUnrlsd", "TekSH");
+    _global_shell = _shell;
 
     if (!readme){
         return !!_BUF_ERROR;
     }
+ 
     version = find_version(readme);
     if (!version) {
         return !!_CONST_BUF_ERROR;

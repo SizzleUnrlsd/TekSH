@@ -39,19 +39,22 @@ format_command(char **command)
 char *
 cut_into_command(char *command)
 {
+    char *end = DEFAULT(end);
+    char *str = DEFAULT(str);
+    char *ptr_command = DEFAULT(ptr_command);
     char *start = strstr(command, "<<");
     if (start == NULL) {
         return NULL;
     }
     start += 2;
-    char *end = strchr(start, '>');
+    end = strchr(start, '>');
     if (end == NULL) {
         return NULL;
     }
-    char str[end - start + 1];
+    str = (char*)malloc(sizeof(char) *(end - start + 1));
     strncpy(str, start, end - start);
     str[end - start] = '\0';
-    char *ptr_command = strdup(str);
+    ptr_command = strdup(str);
     format_command(&ptr_command);
 
     return ptr_command;

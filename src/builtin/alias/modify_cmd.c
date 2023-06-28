@@ -21,11 +21,16 @@ char *
 replace_line(char *cmd, char *actual, char *replace)
 {
     char *result = NULL, *insert = NULL, *tmp = NULL;
+    int32_t len_act = 0;
+    int32_t len_replace = 0;
+    int32_t len_ft_mall = 0;
+    int32_t count = 0;
+
     if (!cmd || !actual)
         return NULL;
 
     (!replace ? replace = "" : 0);
-    int32_t len_act = strlen(actual), len_replace = strlen(replace),
+    len_act = strlen(actual), len_replace = strlen(replace),
     len_ft_mall = 0, count = 0;
     if (len_act == 0)
         return NULL;
@@ -70,9 +75,10 @@ char *
 format_alias_getline(shell_t *shell, char *cmd)
 {
     uint32_t cpt = 0;
-    set_alias(shell->call_alias);
     char *new_line = NULL;
     char **arr_line = _str_to_word_array_custom(shell, cmd, ' ');
+
+    set_alias(shell->call_alias);
 
     while (arr_line[cpt] != NULL) {
         if (strcmp("alias", arr_line[cpt]) == 0) {

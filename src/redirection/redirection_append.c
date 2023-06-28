@@ -20,11 +20,16 @@
 void
 redirection_append_extend(node_t *node, ...)
 {
+    shell_t *shell = DEFAULT(shell);
+    int32_t fd = DEFAULT(fd);
+    char **args = DEFAULT(args);
+
     va_list ap;
     va_start(ap, node);
-    shell_t *shell = va_arg(ap, shell_t*);
-    int32_t fd = va_arg(ap, int);
-    char **args = va_arg(ap, char **);
+
+    shell = va_arg(ap, shell_t*);
+    fd = va_arg(ap, int);
+    args = va_arg(ap, char **);
 
     if (node->type == NODE_REDIRECT_IN) {
         dup2(fd, STDIN_FILENO);
@@ -71,6 +76,9 @@ redirection_append(node_t *node, shell_t *shell)
             ast(node->left, shell);
         }
         file = remove_space_before_string(file);
+        if (!file) {
+            return;
+        }
         del_space_end_str(file);
         parse_command(cmd, args);
         redirection_append_extend_extend(node, file, &fd);

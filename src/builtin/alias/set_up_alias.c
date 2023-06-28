@@ -62,6 +62,10 @@ set_alias(call_alias_t *call_alias)
     static uint32_t i = 0;
     if (i == 0) {
         call_alias->alias[0] = malloc(sizeof(alias_t));
+        if (!call_alias->alias[0]) {
+            _p_error(_MEM_ALLOCA_ERROR);
+        }
+
         call_alias->alias[0]->cmd_alias = strdup("ls");
         call_alias->alias[0]->cmd_is_replace = strdup("ls --color=auto");
         i++;
@@ -73,8 +77,9 @@ int
 alias_engine(shell_t *shell)
 {
     int cpt = 0;
-    COMMAND_FOUND;
     char **arr_line = _str_to_word_array_custom(shell, shell->get_line, ' ');
+    COMMAND_FOUND;
+
     while (arr_line[cpt] != NULL) {
         if (strcmp("alias", arr_line[cpt]) == 0 && (arr_line[cpt + 1] == NULL
         || !isalpha(arr_line[cpt + 1][0]))) {

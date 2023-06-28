@@ -259,7 +259,7 @@ execution(void)
 plugin_t *
 init(void)
 {
-    plugin_t *plugin = malloc(sizeof(plugin));
+    plugin_t *plugin = malloc(sizeof(plugin_t));
     if (plugin == NULL) {
         exit(EXIT_FAILURE);
     }

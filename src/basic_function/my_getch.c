@@ -21,9 +21,15 @@ char *
 _getch(int a)
 {
     char buffer[a];
+    char *str = NULL;
     int rd = read(STDIN_FILENO, buffer, a);
+
     buffer[rd - 1] = '\0';
-    char *str = malloc(sizeof(char) * (rd));
+    str = malloc(sizeof(char) * (rd));
+    if (!str) {
+        _p_error(_MEM_ALLOCA_ERROR);
+    }
+
     _strcpy(str, buffer);
     return (str);
 }

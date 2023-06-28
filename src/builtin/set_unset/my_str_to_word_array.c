@@ -50,12 +50,16 @@ int count_word(char const *str, char const *sep)
 
 char **mstwa(char *str, char const *sep)
 {
+    int y = DEFAULT(y);
+    int nb_word = DEFAULT(nb_word);
+    char *cpy = DEFAULT(cpy);
+    char **dest = DEFAULT(dest);
+
     if (str == NULL)
         return NULL;
-    int y = 0;
-    char *cpy = strdup(str);
-    int nb_word = count_word(str, sep);
-    char **dest = malloc(sizeof(char *) * (nb_word + 1));
+    cpy = strdup(str);
+    nb_word = count_word(str, sep);
+    dest = malloc(sizeof(char *) * (nb_word + 1));
     if (!dest) {
         return NULL;
     }

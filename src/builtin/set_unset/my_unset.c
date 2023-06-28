@@ -41,14 +41,16 @@ int find_key_local(shell_t *shell, char *name)
 
 char **remove_var_local(shell_t *shell, char *name)
 {
-    int save = 0;
-    int res = 0;
-    int j = 0;
+    int save = DEFAULT(save);
+    int res = DEFAULT(res);
+    int j = DEFAULT(j);
+    char **tab = DEFAULT(tab);
+
     if ((res = find_key_local(shell, name)) == -1)
         return shell->local_env;
     else
         save = my_envlen(shell->local_env);
-    char **tab = malloc(sizeof(char *) * save);
+    tab = malloc(sizeof(char *) * save);
     for (int a = 0; shell->local_env[a] != NULL; a++) {
         if (a != res) {
             tab[j] = strdup(shell->local_env[a]);

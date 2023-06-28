@@ -32,14 +32,16 @@ add_space_after_exclamation(char *buf)
 {
     int32_t i = 0, j = 0, count = 0;
     int32_t len = _strlen(buf);
+    char *new_buf = DEFAULT(new_buf);
 
     for (i = 0; i < len; i++) {
         if (buf[i] == '!')
             count++;
     }
-    char *new_buf = malloc(len + count + 1);
-    if (new_buf == NULL)
-        return NULL;
+    new_buf = malloc(len + count + 1);
+    if (!new_buf) {
+        _p_error(_MEM_ALLOCA_ERROR);
+    }
 
     for (i = 0, j = 0; i < len; i++, j++) {
         new_buf[j] = buf[i];
@@ -63,9 +65,10 @@ little_inibitor(char **command)
 char **
 parse_stdin(char *command, shell_t *shell)
 {
+    char **clean_arg = DEFAULT(clean_arg), **arg = DEFAULT(arg);
+    int32_t a = DEFAULT(a), count = DEFAULT(count);
+
     little_inibitor(&command);
-    char **clean_arg = NULL, **arg = NULL;
-    int32_t a = 0, count = 0;
     if (command[0] == '!')
         command = add_space_after_exclamation(command);
     arg = _str_to_word_array_custom_double(shell, command, ' ', '\t');

@@ -42,18 +42,23 @@ terminate_buffer(wildcard_buffer_t *buffer)
 int32_t
 buffer_append(wildcard_buffer_t *buffer, char *data)
 {
+    size_t data_len = DEFAULT(data_len);
+
     if (!buffer || !data)
         return EXIT_FAILURE;
-    size_t data_len = strlen(data);
+
+    data_len = strlen(data);
     while (buffer->size + data_len >= buffer->capacity) {
         buffer->capacity += BUFFER_BLOCK_SIZE;
     }
+
     buffer->data = realloc(buffer->data, buffer->capacity);
     if (!buffer->data)
         return EXIT_FAILURE;
     memset(buffer->data + buffer->size, 0, buffer->capacity - buffer->size);
     memcpy(buffer->data + buffer->size, data, data_len);
     buffer->size += data_len;
+
     return EXIT_SUCCESS;
 }
 

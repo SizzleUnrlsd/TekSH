@@ -1,18 +1,20 @@
 /*
-* {{ project }}
-* Copyright (C) {{ year }}  {{ organization }}
-* This program is free software: you can redistribute it and/or modify
+* Copyright (C) 2023 hugo
+* 
+* This file is part of TekSH.
+* 
+* TekSH is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
 * 
-* This program is distributed in the hope that it will be useful,
+* TekSH is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 * 
 * You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+* along with TekSH.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "shell.h"
@@ -58,6 +60,7 @@ static char *concat_str(const char *str1, const char *str2, ...)
     va_list args;
     size_t len1 = strlen(str1);
     size_t len2 = strlen(str2);
+    const char *str = DEFAULT(str);
 
     char *result = (char *)malloc(sizeof(char) * (len1 + len2 + 1));
     if (!result) {
@@ -67,7 +70,7 @@ static char *concat_str(const char *str1, const char *str2, ...)
     strcat(result, str2);
 
     va_start(args, str2);
-    const char *str;
+    
     while ((str = va_arg(args, const char *)) != NULL) {
         size_t len = strlen(str);
         result = (char *)realloc(result, sizeof(char) * (len1 + len2 + len + 1));
@@ -85,14 +88,15 @@ static char *concat_str(const char *str1, const char *str2, ...)
 char *set_promt(void)
 {
     char prompt[256] = {0};
+    char *_detail = DEFAULT(_detail);
     char *reset = "\033[0m";
     char start = '{';
     char end = '}';
     if (strcmp("UNDEFINE", getgit_branch()) != 0)
         sprintf(prompt, "\033[1;34m%c \033[1;31m%s\033[0m \033[1;34m%c %s", start, getgit_branch(), end, reset);
 
-    char *detail = concat_str("\033[0;34m[", reset, get_dir(), "\033[0;34m]", reset, prompt, NULL);
-    return strdup(detail);
+    _detail = concat_str("\033[0;34m[", reset, get_dir(), "\033[0;34m]", reset, prompt, NULL);
+    return strdup(_detail);
 }
 
 void inthand(int32_t signum __attribute__((unused)))
@@ -108,22 +112,27 @@ void inthand(int32_t signum __attribute__((unused)))
 
 int32_t prompt_shell(shell_t *shell)
 {
-    signal(SIGINT, inthand);
+    char *line = DEFAULT(line);
+    static int32_t first_call = 1;
     struct termios old_termios, new_termios;
     tcgetattr(STDIN_FILENO, &old_termios);
     new_termios = old_termios;
     new_termios.c_lflag &= ~ECHOCTL;
     tcsetattr(STDIN_FILENO, TCSANOW, &new_termios);
 
-    static int first_call = 1;
+    signal(SIGINT, inthand);
     if (first_call) {
         first_call = 0;
         load_history("history.txt");
         rl_attempted_completion_function = command_completion;
     }
     
-    char *line = NULL;
     detail = set_promt();
+    if (!detail) {
+        _p_error(_MEM_ALLOCA_ERROR);
+    }
+    garbage_collector(detail, shell);
+
     do {
         if (shell->status == 0) {
             _print(ANSI_BOLD_ON);

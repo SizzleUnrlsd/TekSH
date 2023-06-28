@@ -17,15 +17,16 @@
 
 #include "shell.h"
 
-sigjmp_buf env_stack;
+#ifndef DEBUG
+    sigjmp_buf env_stack;
+    void catch_segv(int32_t sig)
+    {
+        pfflush_wrapper(STDERR_FILENO, "SEGFAULT[%d]\n", sig);
+        siglongjmp(env_stack, 1);
+    }
+#endif
 
 shell_conf_t globalConfig;
-
-void catch_segv(int32_t sig)
-{
-    pfflush_wrapper(STDERR_FILENO, "SEGFAULT[%d]\n", sig);
-    siglongjmp(env_stack, 1);
-}
 
 void shell_engine(shell_t *shell, char **env)
 {
@@ -46,15 +47,19 @@ void shell_engine(shell_t *shell, char **env)
             shell->get_line = strdup(new_line);
         }
 
-        if (sigsetjmp(env_stack, 1) == 0) {
+        #ifndef DEBUG
+            if (sigsetjmp(env_stack, 1) == 0) {
+                ast_final(shell->get_line, shell);
+            } else {
+                FILE* file = fopen("mini_dump/error_promt_cmd", "a");
+                char log[256];
+                sprintf(log, "%s/%s", shell->get_line, ARCH);
+                fprintf(file, "%s\n", log);
+                fclose(file);
+            }
+        #else
             ast_final(shell->get_line, shell);
-        } else {
-            FILE* file = fopen("mini_dump/error_promt_cmd", "a");
-            char log[256];
-            sprintf(log, "%s/%s", shell->get_line, ARCH);
-            fprintf(file, "%s\n", log);
-            fclose(file);
-        }
+        #endif
     }
 }
 
@@ -66,15 +71,20 @@ shell_theme()
 
 int main(int32_t ac, char **av, char **env)
 {
+    shell_t *shell = DEFAULT(shell);
+    pid_t pid;
     parse_arg(ac, av);
 
+#ifndef DEBUG
     signal(SIGSEGV, catch_segv);
-    shell_t *shell = init_shell();
+#endif
+
+    shell = init_shell();
     shell_theme();
 
-    pid_t pid = fork();
+    pid = fork();
     if (pid == 0) {
-        check_version();
+        check_version(shell);
     }
     if (pid != 0) {
         if (waitpid(pid, NULL, 0) == -1) {
@@ -82,6 +92,5 @@ int main(int32_t ac, char **av, char **env)
         }
         shell_engine(shell, env);
     }
-
     return 0;
 }

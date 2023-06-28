@@ -20,15 +20,19 @@
 void
 set_new_old_pwd(shell_t *shell, char *path, char *mess_env)
 {
-    free_attribut(shell->get_line, shell);
     int32_t fmall = _strlen(path);
-    char *concat = concat_char_str(' ', mess_env, fmall, 1);
+    char *concat = NULL;
+    char *final = NULL;
+    char **diff = NULL;
+
+    free_attribut(shell->get_line, shell);
+    concat = concat_char_str(' ', mess_env, fmall, 1);
     garbage_collector(concat, shell);
-    char *final = _strcat(concat, path);
+    final = _strcat(concat, path);
     final = concat_char_str('\n', final, 1, 1);
     shell->get_line = final;
 
-    char **diff = _str_to_word_array_custom(shell, mess_env, ' ');
+    diff = _str_to_word_array_custom(shell, mess_env, ' ');
 
     if (pwd_already_ini_env(shell, diff[1]) == 1)
         add_line_to_array(shell, 3, 0);
@@ -108,11 +112,13 @@ int32_t
 build_cd_foobar(shell_t *shell, char **arg,
     int32_t len_arg, uint32_t *invalid_cd)
 {
+    int32_t result = 0;
+
     if (len_arg == 2 && check_perm_dir(shell, arg[1], invalid_cd) == 0) {
         shell->cd_old_path = getcwd(NULL, 4096);
         garbage_collector(shell->cd_old_path, shell);
         set_new_old_pwd(shell, shell->cd_old_path, "setenv OLDPWD");
-        int32_t result = chdir(arg[1]);
+        result = chdir(arg[1]);
         shell->cd_new_path = getcwd(NULL, 4096);
         garbage_collector(shell->cd_new_path, shell);
         set_new_old_pwd(shell, shell->cd_new_path, "setenv PWD");

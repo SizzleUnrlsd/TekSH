@@ -6,7 +6,7 @@
 int
 execution_disp(void)
 {
-    printf("Command exedsfdgfhgjcutiqshcvbhwsjdvbhwdjvbwjdxvbxdhkvbxdhvbxdjhvdxfbhon\n");
+    printf("Example of running the 'Hello' command\n");
     return 0;
 }
 
@@ -18,6 +18,6 @@ init(void)
         exit(EXIT_FAILURE);
     }
     plugin->execute = execution_disp;
-    plugin->command = strdup("disp");
+    plugin->command = strdup("Hello");
     return plugin;
 }

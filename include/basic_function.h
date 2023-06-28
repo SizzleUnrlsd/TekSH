@@ -167,8 +167,8 @@
 
         /* VERSION */
 
-    char *getgit_branch();
-    int32_t check_version(void);
+    char *getgit_branch(void);
+    int32_t check_version(shell_t *shell);
     void handleVersion(void);
 
         /* PARSE_ARG */

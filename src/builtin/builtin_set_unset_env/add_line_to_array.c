@@ -34,18 +34,18 @@ void set_unset_in_env(shell_t *shell, char **env, int32_t len_arg)
     char **first_step =
     (char**)malloc_attribut(sizeof(char *) * len_array(env) + 2, shell);
     i = function_set_param_env(i, env, first_step, shell);
-    for (int32_t i = 0; env[i]; i++) {
+    for (int32_t index = 0; env[index]; index++) {
         first_step = _str_to_word_array_custom
-        (shell, shell->set_env->env_array[i], '=');
+        (shell, shell->set_env->env_array[index], '=');
         if ((_strcmp(first_step[0], arg[1]) == 0) && len_arg == 3) {
-            free_attribut(env[i], shell);
+            free_attribut(env[index], shell);
             garbage_collector
-            (set_unset_env_ext(i, arg, env, second_step), shell);
+            (set_unset_env_ext(index, arg, env, second_step), shell);
         }
         if ((_strcmp(first_step[0], arg[1]) == 0) && len_arg == 2) {
             arg[2] = " ";
-            free_attribut(env[i], shell);
-            set_unset_env_ext(i, arg, env, second_step);
+            free_attribut(env[index], shell);
+            set_unset_env_ext(index, arg, env, second_step);
         }
     }
     return;

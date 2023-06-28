@@ -1,19 +1,21 @@
 /**
-* {{ project }}
-* Copyright (C) {{ year }}  {{ organization }}
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2023 hugo
+ * 
+ * This file is part of TekSH.
+ * 
+ * TekSH is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * TekSH is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with TekSH.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef SHELL_H_
     #define SHELL_H_
@@ -137,12 +139,63 @@
 #endif
 
 #ifndef P_ERROR_
-    #define _p_error(fd, str) print_str(str, 0, true, fd);
+    #define _p_error(error) \
+        do { \
+            char *_str; \
+            switch(error) { \
+                case _BUF_ERROR: \
+                    _str = "Buffer Error"; \
+                    break; \
+                case _FORK_ERROR: \
+                    _str = "Fork Error"; \
+                    break; \
+                case _FILE_ERROR: \
+                    _str = "File Error"; \
+                    break; \
+                case _WRITE_ERROR: \
+                    _str = "Write Error"; \
+                    break; \
+                case _CONST_BUF_ERROR: \
+                    _str = "Constant Buffer Error"; \
+                    break; \
+                case _MEM_ALLOCA_ERROR: \
+                    _str = "Memory Allocation Error"; \
+                    break; \
+                case _THREAD_ALLOCA_ERROR: \
+                    _str = "Thread Allocation Error"; \
+                    break; \
+                default: \
+                    _str = "Unknown Error"; \
+                    break; \
+            } \
+            print_str(_str, 0, true, STDERR_FILENO); \
+        } while(0)
 #endif
+
 
 #ifndef GLOBAL_BUFFER_SHELL_THEME_H
     #define GLOBAL_BUFFER_SHELL_THEME_H
 
     extern char _buff_shell_theme[1024];
+#endif
+
+#ifndef _DEFAULT_VAR_
+    #define _DEFAULT_VAR_
+    #define DEFAULT(x) _Generic((x), \
+    int32_t: 0, \
+    uint32_t: 0, \
+    float: 0.0f, \
+    double: 0.0, \
+    char: '\0', \
+    size_t: (size_t)0, \
+    default: NULL)
+
+#endif
+
+#ifndef _INIT_VAR_
+    #define _INITI_VAR_
+    #define INIT(x) _Generic((x), \
+        char[sizeof(x)]: (void)INIT_ARRAY(x), \
+        default: memset(&(x), 0, sizeof(x)))
 
 #endif

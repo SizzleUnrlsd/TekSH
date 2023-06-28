@@ -22,7 +22,7 @@ malloc_attribut(size_t size, shell_t *shell)
 {
     void *p = malloc(size);
     if (p == NULL)
-        exit(84);
+        exit(_MEM_ALLOCA_ERROR);
     garbage_collector(p, shell);
     return p;
 }

@@ -20,12 +20,13 @@
 static void *
 _memcpy(void *dest, const void *src, size_t n)
 {
-    if (dest == NULL || src == NULL)
-        return NULL;
+    size_t i = 0;
     char *_d = dest;
     const char *_s = src;
 
-    size_t i = 0;
+    if (dest == NULL || src == NULL)
+        return NULL;
+
     do {
         _d[i] = _s[i];
         i++;

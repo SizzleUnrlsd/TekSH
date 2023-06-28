@@ -50,14 +50,19 @@ ast(node_t *node, shell_t *shell)
             ast(node->right, shell);
             break;
         case NODE_ARGUMENT:
+            {
+            char *tmp = NULL;
+            char **arg = NULL;
+
             shell->get_line = node->value;
-            char *tmp = update_wildcard(node->value, shell);
+            tmp = update_wildcard(node->value, shell);
             if (tmp == NULL)
                 break;
-            char **arg = parse_stdin(tmp, shell);
+            arg = parse_stdin(tmp, shell);
             execute_command(arg, shell);
             reset_var_shell(shell);
             break;
+            }
         default:
             exit_shell(shell);
     }

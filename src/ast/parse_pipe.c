@@ -20,10 +20,12 @@
 node_t *
 parse_pipe(char **input, shell_t *shell)
 {
+    node_t *right = NULL;
     node_t *left = parse_redirect(input, shell);
+
     if (**input == '|' && *(*input + 1) != '|') {
         (*input)++;
-        node_t *right = parse_pipe(input, shell);
+        right = parse_pipe(input, shell);
         return create_node(NODE_PIPE, NULL, left, right, shell);
     }
     return left;

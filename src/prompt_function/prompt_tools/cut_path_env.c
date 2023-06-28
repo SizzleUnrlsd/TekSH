@@ -47,12 +47,15 @@ void free_specific(shell_t *shell, char **full_env)
 
 char **cut_path_env(shell_t *shell, char **array)
 {
-    char **path = NULL;
-    char **full_env = NULL;
+    char **path = DEFAULT(path);
+    char **full_env = DEFAULT(full_env);
+    int32_t integer_path = DEFAULT(integer_path);
     int32_t len_arr = len_array(array);
-    if (len_arr == 0)
+
+    if (len_arr == 0) {
         return NULL;
-    int32_t integer_path = 0;
+    }
+
     for (uint32_t i = 0; array[i] != NULL; i++) {
         full_env = _str_to_word_array_custom(shell, array[i], '=');
         if (_strcmp(full_env[0], "PATH") == 0) {

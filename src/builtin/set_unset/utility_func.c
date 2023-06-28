@@ -20,23 +20,30 @@
 
 char **duparray(char **array)
 {
-    int i = 0;
-    while (array[i] != NULL)
-        i++;
-    char **dup = malloc(sizeof(char *) * (i + 1));
-    i = 0;
-    while (array[i] != NULL) {
-        dup[i] = strdup(array[i]);
-        i++;
+    int index = DEFAULT(index);
+    char **dup = DEFAULT(dup);
+
+    while (array[index] != NULL)
+        index++;
+
+    dup = malloc(sizeof(char *) * (index + 1));
+    if (!dup) {
+        _p_error(_MEM_ALLOCA_ERROR);
     }
-    dup[i] = NULL;
+    index = 0;
+    while (array[index] != NULL) {
+        dup[index] = strdup(array[index]);
+        index++;
+    }
+    dup[index] = NULL;
     return dup;
 }
 
 int my_envlen(char **array)
 {
-    int i = 0;
-    while (array[i] != NULL)
-        i++;
-    return i;
+    int32_t index = DEFAULT(index);
+
+    while (array[index] != NULL)
+        index++;
+    return index;
 }

@@ -20,13 +20,14 @@
 int32_t
 stat_copy(char const *str)
 {
+    char buffer[1];
     int32_t n = 0;
     int32_t size = 0;
     int32_t open_fd = open(str, O_RDONLY);
 
-    if (open_fd == -1)
+    if (open_fd == -1) {
         return -1;
-    char buffer[1];
+    }
     while ((n = read(open_fd, buffer, 1)) > 0)
         size += n;
     close(open_fd);

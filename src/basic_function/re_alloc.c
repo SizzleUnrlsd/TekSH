@@ -20,20 +20,20 @@
 char **
 re_alloc(shell_t *shell, char **src, int len_src, int len_dest)
 {
-    int32_t i = 0, e = 0;
+    int32_t index = 0, e = 0;
     char **nouveau = (char**)
     malloc_attribut(sizeof(char*) * (len_src + len_dest + 2), shell);
-    while (i != len_src) {
-        nouveau[i] = _strdup(src[i], shell);
-        i++;
+    while (index != len_src) {
+        nouveau[index] = _strdup(src[index], shell);
+        index++;
     }
     while (e != len_dest) {
-        nouveau[i] = "\0";
-        i++;
+        nouveau[index] = "\0";
+        index++;
         e++;
     }
-    nouveau[i + 1] = NULL;
-    for (int i = 0; i != len_src; i++)
+    nouveau[index + 1] = NULL;
+    for (int32_t i = 0; i != len_src; i++)
         free(src[i]);
     free(src);
     return nouveau;

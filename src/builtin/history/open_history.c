@@ -20,8 +20,10 @@
 int32_t
 create_history(char *str)
 {
+    int fd = DEFAULT(fd);
     remove(str);
-    int fd = open(str, O_RDWR | O_CREAT);
+    
+    fd = open(str, O_RDWR | O_CREAT);
     chmod(str, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
     if (fd == -1)
         return 1;

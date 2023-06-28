@@ -32,6 +32,7 @@ parse_redirect_extend(char **input, nodetype *type)
 node_t *
 parse_heredoc(char **input, shell_t *shell)
 {
+    node_t *right = NULL;
     node_t *left = parse_argument(input, shell);
     nodetype type;
 
@@ -39,7 +40,7 @@ parse_heredoc(char **input, shell_t *shell)
         (*input)++;
         (*input)++;
         type = NODE_REDIRECT_HEREDOC;
-        node_t *right = parse_heredoc(input, shell);
+        right = parse_heredoc(input, shell);
 
         return create_node(type, NULL, left, right, shell);
     }
@@ -49,18 +50,19 @@ parse_heredoc(char **input, shell_t *shell)
 node_t *
 parse_redirect(char **input, shell_t *shell)
 {
+    node_t *right = NULL;
     node_t *left = parse_heredoc(input, shell);
 
     nodetype type;
     if (**input == '>') {
         (*input)++;
         parse_redirect_extend(input, &type);
-        node_t *right = parse_redirect(input, shell);
+        right = parse_redirect(input, shell);
         return create_node(type, NULL, left, right, shell);
     } else if (**input == '<' && *(*input + 1) != '<') {
         (*input)++;
         type = NODE_REDIRECT_IN;
-        node_t *right = parse_redirect(input, shell);
+        right = parse_redirect(input, shell);
         return create_node(type, NULL, left, right, shell);
     }
     return left;

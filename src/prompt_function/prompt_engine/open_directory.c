@@ -34,6 +34,8 @@ arg_formater(char **arg, char *without_n)
 int32_t
 command_is_here(char *command, char *dir, int32_t len_arg, shell_t *shell)
 {
+    char command_path[256] = {0};
+
     if (command == NULL)
         return 1;
     if (dir[0] == '.' && len_arg == 1) {
@@ -41,7 +43,6 @@ command_is_here(char *command, char *dir, int32_t len_arg, shell_t *shell)
         EXIT_W_ECHO_ERROR_(": Permission denied.", 1);
         return 1;
     }
-    char command_path[256] = {0};
     snprintf(command_path, sizeof(command_path), "%s/%s", dir, command);
     if (access(command_path, X_OK) == -1) {
         print_str(command_path, 0, true, 2);
@@ -69,11 +70,13 @@ go_to_dollar_engine(char **arg, int32_t shell_status, shell_t *shell)
 int32_t
 open_directory(shell_t *shell, char **path, char **arg)
 {
+    char *concat_first_step = DEFAULT(concat_first_step), *concat_second_step = DEFAULT(concat_second_step);
+    char *without_n = DEFAULT(without_n);
+    int32_t fmall = DEFAULT(fmall), shell_status = DEFAULT(shell_status);
+
     if (arg[0][0] == '.' && command_is_here(arg[0] + 2, chr_to_str(arg[0][0]), _strlen(arg[0]), shell) == 1) {
         exit(1);
     }
-    char *concat_first_step = NULL, *concat_second_step = NULL;
-    int32_t fmall = 0, shell_status = 0; char *without_n = NULL;
     without_n = arg_formater(arg, without_n);
     go_to_dollar_engine(arg, shell_status, shell);
     if (path == NULL) {

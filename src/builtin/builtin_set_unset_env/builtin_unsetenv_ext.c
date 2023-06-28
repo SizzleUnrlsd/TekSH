@@ -18,9 +18,8 @@
 #include "shell.h"
 
 int32_t
-unset_env(shell_t *shell, int32_t in_env, int32_t *a, int32_t index)
+unset_env(shell_t *shell, int32_t in_env __attribute__((unused)), int32_t *a, int32_t index)
 {
-    (void) in_env;
     int32_t i = 0, j = 0;
     char **env = shell->set_env->env_array;
     for (; i < len_array(env); i++) {

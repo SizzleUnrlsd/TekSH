@@ -22,9 +22,10 @@ execute_command_with_redirection(shell_t *shell,
                 const char *input, node_t *node)
 {
     int32_t pipefd[2] = {0};
+    pid_t pid;
     pipe(pipefd);
 
-    pid_t pid = fork();
+    pid = fork();
 
     if (pid == 0) {
         close(pipefd[1]);
@@ -44,23 +45,28 @@ execute_command_with_redirection(shell_t *shell,
 void
 redirection_dup_in_extend(shell_t *shell, char *file, char *cmd, ...)
 {
-    file = remove_space_before_string(file);
-    garbage_collector(file, shell);
-    del_space_end_str(file);
+    char **arg = DEFAULT(arg);
+    char *end_keyword = DEFAULT(end_keyword);
+    char *input = DEFAULT(input);
 
     va_list ap;
     va_start(ap, cmd);
 
-    char **arg = va_arg(ap, char **);
+    file = remove_space_before_string(file);
+    garbage_collector(file, shell);
+    del_space_end_str(file);
+
+
+    arg = va_arg(ap, char **);
     parse_command(cmd, arg);
-    char *end_keyword = va_arg(ap, char *);
+    end_keyword = va_arg(ap, char *);
     strcpy(end_keyword, file);
     strcat(end_keyword, "\n");
-    char *input = va_arg(ap, char *);
+    input = va_arg(ap, char *);
     strcpy(input, "");
+
     va_end(ap);
     return;
-    (void) shell;
 }
 
 void

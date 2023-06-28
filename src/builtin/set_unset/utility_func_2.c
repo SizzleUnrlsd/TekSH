@@ -19,11 +19,14 @@
 
 char *my_strconcat(char *src_left, char *src_right)
 {
-    int i = 0;
-    int j = 0;
+    int i = DEFAULT(i);
+    int j = DEFAULT(j);
+    char *dest = DEFAULT(dest);
+
     if (src_right == NULL)
         return src_left;
-    char *dest = malloc(sizeof(char) *
+
+    dest = malloc(sizeof(char) *
     (_strlen(src_left) + _strlen(src_right) + 1));
     if (dest == NULL)
         return NULL;

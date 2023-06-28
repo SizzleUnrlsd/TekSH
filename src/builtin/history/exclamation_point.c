@@ -19,15 +19,22 @@
 
 char *recup_command(int *nb, shell_t *shell)
 {
-    char *num = strtok(shell->history->line, "\t");
-    if (num == NULL)
+    char *num = NULL;
+    char *cut_time = NULL;
+    char *command = NULL;
+    int n = 0;
+
+    num = strtok(shell->history->line, "\t");
+    if (num == NULL) {
         return NULL;
-    int n = atoi(num);
+    }
+
+    n = atoi(num);
     if (n == *nb) {
-        char *cut_time = strtok(NULL, "\t");
+        cut_time = strtok(NULL, "\t");
         if (cut_time == NULL)
             return NULL;
-        char *command = strtok(NULL, "\n");
+        command = strtok(NULL, "\n");
         if (command == NULL)
             return NULL;
         return command;
@@ -74,9 +81,10 @@ int32_t find_in_file(shell_t *shell, int nb)
 int32_t
 builtin_exclamation(shell_t *shell)
 {
-    COMMAND_FOUND;
     int32_t future_shell_value = 0;
     char *cmd = strdup(shell->get_line);
+    COMMAND_FOUND;
+
     if (cmd[0] == '!') {
         char *exclamation = strchr(cmd, '!');
         int cmd_num = atoi(exclamation + 1);

@@ -21,6 +21,6 @@ char
 _putchar(char c, int fd)
 {
     if (write(fd, &c, 1) == -1)
-        _p_error(_WRITE_ERROR, "Write Error\n");
+        _p_error(_WRITE_ERROR);
     return 0;
 }
