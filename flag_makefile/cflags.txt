@@ -1,0 +1,1 @@
+-W -Wall -Wextra -Werror -Wshadow -Wpointer-arith -Wduplicated-cond -Wswitch-enum -Wfloat-equal -Wtautological-compare -Wcast-qual -Wdeclaration-after-statement -Walloc-zero -Warray-bounds -Wstrict-overflow -Wformat-security -pedantic -g3 -Os -I./include/

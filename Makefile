@@ -1,9 +1,19 @@
-##
-## EPITECH PROJECT, 2023
-## B-PSU-100-RUN-1-1-bsnavy-hugo.payet
-## File description:
-## Makefile
-##
+# Copyright (C) 2023 hugo
+# 
+# This file is part of TekSH.
+# 
+# TekSH is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# TekSH is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with TekSH.  If not, see <http://www.gnu.org/licenses/>.
 
 SRC	=	$(shell find ./src -name "*.c")
 
@@ -15,13 +25,13 @@ OBJ	=	$(SRC:.c=.o) $(PLUG:.c=.o)
 
 NAME	=	teksh
 
-CFLAGS 	=	-W -Wall -Wextra -Werror -pedantic -g3 -Os -I./include/
+CFLAGS 	=	@flag_makefile/cflags.txt
 
 LDLIBS = -lreadline -lncurses -ldl
 
-MEMORY_FLAG	=	-Wpadded -fsanitize=address -fstack-protector-strong -fPIE -fmerge-all-constants
+MEMORY_FLAG	=	@flag_makefile/memory_flags.txt
 
-NODEADCODE	=	-fdata-sections -ffunction-sections -Wl,--gc-sections
+NODEADCODE	=	@flag_makefile/nodeadcode.txt
 
 UNAME_S := $(shell uname -s)
 
@@ -51,7 +61,13 @@ TEST_BIN =	unit_tests
 TEST_SRC =	$(shell find ./src -name "*.c" -not -name "sh.c") \
 	$(shell find ./tests -name "*.c")
 
+
 all	:	$(OBJ)
+	$(CC) -o $(NAME) $(CFLAGS) $(SRC) $(PLUG) $(LDLIBS)
+	make -C plugins/add_ons/
+
+debug: CFLAGS += -DDEBUG -g3
+debug: $(OBJ)
 	$(CC) -o $(NAME) $(CFLAGS) $(SRC) $(PLUG) $(LDLIBS)
 	make -C plugins/add_ons/
 
@@ -62,6 +78,8 @@ clean	:
 	rm -f *.gcno
 	rm -f *.gcda
 	rm -f *.c~
+	rm -f $(OBJ:.o=.i)
+	rm -f $(OBJ:.o=.s)
 
 fclean	: clean
 	make -C plugins/add_ons/ fclean
@@ -75,6 +93,3 @@ $(TEST_BIN): all
 
 tests_run:	$(TEST_BIN)
 	./$(TEST_BIN)
-
-valgrind:
-	valgrind ./$(NAME)

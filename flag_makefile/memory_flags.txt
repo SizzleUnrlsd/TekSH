@@ -1,0 +1,1 @@
+-Wpadded -fsanitize=address -fstack-protector-strong -fPIE -fmerge-all-constants

@@ -1,0 +1,1 @@
+-fdata-sections -ffunction-sections -Wl,--gc-sections
