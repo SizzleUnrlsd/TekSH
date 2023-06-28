@@ -27,7 +27,7 @@ NAME	=	teksh
 
 CFLAGS 	=	@flag_makefile/cflags.txt
 
-LDLIBS = -lreadline -lncurses -ldl
+LDLIBS = @flag_makefile/ldlibs.txt
 
 MEMORY_FLAG	=	@flag_makefile/memory_flags.txt
 
