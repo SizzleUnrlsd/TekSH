@@ -156,6 +156,7 @@ You can help by sharing this file in case of a bug.
 - [ ] Improved memory utilisation
 - [ ] Advanced input/output management
 - [ ] Add architecture tests.
+- [ ] GitHub action.
 
 **Note :** This roadmap is subject to change and will be updated as the project evolves.
 
