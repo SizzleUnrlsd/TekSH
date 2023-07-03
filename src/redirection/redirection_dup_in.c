@@ -23,7 +23,9 @@ execute_command_with_redirection(shell_t *shell,
 {
     int32_t pipefd[2] = {0};
     pid_t pid;
-    pipe(pipefd);
+    if (pipe(pipefd) == -1) {
+        _p_error(_PIPE_ERROR);
+    }
 
     pid = fork();
 
@@ -35,7 +37,9 @@ execute_command_with_redirection(shell_t *shell,
         exit(0);
     } else {
         close(pipefd[0]);
-        write(pipefd[1], input, strlen(input));
+        if (write(pipefd[1], input, strlen(input)) == -1) {
+            _p_error(_WRITE_ERROR);
+        }
         close(pipefd[1]);
         waitpid(pid, NULL, 0);
     }

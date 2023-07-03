@@ -108,6 +108,7 @@
         _CONST_BUF_ERROR = 6,
         _MEM_ALLOCA_ERROR = 7,
         _THREAD_ALLOCA_ERROR = 8,
+        _PIPE_ERROR = 9,
     };
 
 #endif
@@ -163,6 +164,9 @@
                     break; \
                 case _THREAD_ALLOCA_ERROR: \
                     _str = "Thread Allocation Error"; \
+                    break; \
+                case _PIPE_ERROR: \
+                    _str = "Pipe Error"; \
                     break; \
                 default: \
                     _str = "Unknown Error"; \

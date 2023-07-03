@@ -1,0 +1,11 @@
+FROM tmgd/fedora_gcc_make_readline:v1.0.0
+
+WORKDIR /app
+
+COPY . /app
+
+COPY ./tests/build.sh /app/build.sh
+
+RUN chmod +x build.sh
+
+CMD ["./build.sh"]

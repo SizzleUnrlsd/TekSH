@@ -35,6 +35,11 @@ NODEADCODE	=	@flag_makefile/nodeadcode.txt
 
 UNAME_S := $(shell uname -s)
 
+TEST_BIN =	unit_tests
+
+TEST_SRC =	$(shell find ./src -name "*.c" -not -name "sh.c") \
+	$(shell find ./tests -name "*.c")
+
 ifeq ($(UNAME_S),Darwin)
 	ARCH := $(shell uname -p)
 else
@@ -56,17 +61,12 @@ endif
 %.o: %.c
 	$(CC) $(CFLAGS) $(MEMORY_FLAG) $(NODEADCODE) -c $< -o $@ 
 
-TEST_BIN =	unit_tests
-
-TEST_SRC =	$(shell find ./src -name "*.c" -not -name "sh.c") \
-	$(shell find ./tests -name "*.c")
-
-
 all	:	$(OBJ)
 	$(CC) -o $(NAME) $(CFLAGS) $(SRC) $(PLUG) $(LDLIBS)
 	make -C plugins/add_ons/
 
 debug: CFLAGS += -DDEBUG -g3
+
 debug: $(OBJ)
 	$(CC) -o $(NAME) $(CFLAGS) $(SRC) $(PLUG) $(LDLIBS)
 	make -C plugins/add_ons/
@@ -93,3 +93,6 @@ $(TEST_BIN): all
 
 tests_run:	$(TEST_BIN)
 	./$(TEST_BIN)
+
+tests_build:
+	cd tests && ./test_build.sh

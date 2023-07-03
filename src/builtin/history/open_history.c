@@ -23,7 +23,7 @@ create_history(char *str)
     int fd = DEFAULT(fd);
     remove(str);
     
-    fd = open(str, O_RDWR | O_CREAT);
+    fd = open(str, O_RDWR | O_CREAT, 0644);
     chmod(str, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
     if (fd == -1)
         return 1;
