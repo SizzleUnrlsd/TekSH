@@ -4,6 +4,7 @@ Version 1.1.2
 -----------------
 
 ## Description
+
 TekSH is a small project that would like to grow bigger. Its aim is to implement a shell and add functionality.
 You are welcome to join us !
 
@@ -24,13 +25,14 @@ make
 -----------------
 
 ## Usage
+
 ```
-pwd
-ls ; cd ~
-cd -
-touch toto ; ls -alt > toto ; cat toto
-ls | cat | cat | cat > toto
-turtle
+•[/home/TekSH]{ main } pwd
+•[/home]{ main } ls ; cd ~
+•[/home/TekSH]{ main } cd -
+•[/home/TekSH]{ main } touch toto ; ls -alt > toto ; cat toto
+•[/home/TekSH]{ main } ls | cat | cat | cat > toto
+•[/home/TekSH]{ main } turtle
 ```
 
 -----------------
@@ -40,16 +42,16 @@ turtle
 - [ ] [Builtins]
 
 ```
-alias
-cd
-echo
-env
-exit
-set
-setenv
-unset
-unsetenv
-history
+•[/home/TekSH]{ main } alias l ls -alt
+•[/home/TekSH]{ main } cd
+•[/home/TekSH]{ main } echo
+•[/home/TekSH]{ main } env
+•[/home/TekSH]{ main } exit
+•[/home/TekSH]{ main } set
+•[/home/TekSH]{ main } setenv
+•[/home/TekSH]{ main } unset
+•[/home/TekSH]{ main } unsetenv
+•[/home/TekSH]{ main } history
 ```
 
 - [ ] [Plugins]
