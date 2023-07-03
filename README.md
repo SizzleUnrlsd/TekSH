@@ -127,6 +127,19 @@ Other distributions will be tested soon !
 
 Integration tests on different architectures are coming soon.
 
+## Compilation
+
+Teksh is compiled with gcc. You can find the compilation flags in the following folder:
+
+```
+Shell
+├── flag_makefile
+│   ├── cflags.txt
+│   ├── ldlibs.txt
+│   ├── memory_flags.txt
+│   └── nodeadcode.txt
+```
+
 ## Debug
 
 By default, the shell catches errors linked to SIGSEGV. You can disable this mode by recompiling with :
