@@ -1,8 +1,6 @@
 # TekSH
 Version 1.1.2
-<!-- Ce texte ne sera pas affiché -->
 <img src="https://t.bkit.co/w_64925db39b56d.gif" />
-
 -----------------
 
 ## Description
@@ -55,7 +53,14 @@ history
 You can also create your own orders with the plugins. Use the turtle command:
 
 ```
-turtle
+•[/home] turtle
+
+          _____     ____
+         /      \  |  o |
+        |        |/ ___\|
+        |_________/
+        |_| | |_| |
+
 ```
 
 This command was added to the code quite simply.
