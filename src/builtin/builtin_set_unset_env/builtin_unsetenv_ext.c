@@ -22,7 +22,7 @@
 int32_t
 unset_env(shell_t *shell, int32_t in_env UNUSED_ARG, int32_t *a, int32_t index)
 {
-    int32_t i = 0, j = 0;
+    int32_t i = DEFAULT(i), j = DEFAULT(j);
     char **env = shell->set_env->env_array;
     for (; i < len_array(env); i++) {
         if (a[index] == -1) {
@@ -51,7 +51,7 @@ builtin_unsetenv_loop
 void
 builtin_unsetenv_ext(shell_t *shell, int32_t in_env, int32_t len_arg)
 {
-    int32_t count = 0;
+    int32_t count = DEFAULT(count);
 
     for (int32_t i = 0; shell->several_arg_builtin[i] != -1; i++)
         if (shell->several_arg_builtin[i] == -1)

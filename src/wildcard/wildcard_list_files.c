@@ -35,6 +35,7 @@ wildcard_count_dir(char *pwd)
         dirent = readdir(dir);
     }
     closedir(dir);
+
     return count;
 }
 

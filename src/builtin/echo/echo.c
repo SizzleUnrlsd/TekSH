@@ -23,6 +23,7 @@ void
 remove_quotes(char **str)
 {
     int32_t len = _strlen((*str));
+
     if (len > 1 && *str[0] == '"') {
         (*str)++;
         len--;
@@ -35,7 +36,8 @@ remove_quotes(char **str)
 uint32_t
 echo_validity(char *arg)
 {
-    uint32_t count = 0;
+    uint32_t count = DEFAULT(count);
+
     for (int32_t i = 0; arg[i] != '\0'; i++) {
         if (arg[i] == '"')
             count++;
@@ -46,7 +48,8 @@ echo_validity(char *arg)
 int32_t
 echo_engine(char **arg, int32_t len_arg, shell_t *shell)
 {
-    uint32_t tmp = 0;
+    uint32_t tmp = DEFAULT(tmp);
+
     for (int32_t i = 1; i < len_arg; i++) {
         tmp = tmp + echo_validity(arg[i]);
     }
@@ -60,13 +63,15 @@ echo_engine(char **arg, int32_t len_arg, shell_t *shell)
             _putchar(' ', 1);
     }
     _putchar('\n', 1);
+
     return 0;
 }
 
 static int32_t
 dollar_engine_echo(char **arg, int32_t i, shell_t *shell)
 {
-    char *tmp = NULL;
+    char *tmp = DEFAULT(tmp);
+
     if (arg[i][0] == '$') {
         if (_strcmp(arg[i], "$?") == 0) {
             _put_nbr(shell->status);
@@ -83,6 +88,7 @@ dollar_engine_echo(char **arg, int32_t i, shell_t *shell)
     } else {
         pfflush_wrapper(1, "%s\n", tmp);
     }
+
     return 0;
 }
 
@@ -91,6 +97,7 @@ _echo(shell_t *shell)
 {
     char **arg = parse_stdin(shell->get_line, shell);
     int32_t len_arg = len_array(arg);
+
     COMMAND_FOUND;
 
     if (len_arg == 1) {

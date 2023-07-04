@@ -19,8 +19,6 @@
 
 #include "shell.h"
 
-// static shell_t *_global_shell;
-
 char *get_readme_from_github(const char* repo_owner, const char* repo_name)
 {
     const char* base_url = "https://raw.githubusercontent.com";
@@ -61,7 +59,7 @@ char *get_readme_from_github(const char* repo_owner, const char* repo_name)
 const char *
 find_version(const char *_buf)
 {
-    const char *version = NULL;
+    const char *version = DEFAULT(version);
     const char *keyword = "Version";
 
     version = strstr(_buf, keyword);
@@ -147,12 +145,10 @@ check_current_version(const char *version)
 }
 
 START_FIRST int
-check_version(shell_t *_shell)
+check_version(void)
 {
     const char *version = DEFAULT(version);
     char *readme = get_readme_from_github("SizzleUnrlsd", "TekSH");
-    // _global_shell = _shell;
-    (void) _shell;
 
     if (!readme){
         return !!_BUF_ERROR;

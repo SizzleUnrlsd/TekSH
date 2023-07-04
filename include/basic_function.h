@@ -170,7 +170,7 @@
         /* VERSION */
 
     char *getgit_branch(void);
-    int32_t check_version(shell_t *shell);
+    int32_t check_version(void);
     void handleVersion(void);
 
         /* PARSE_ARG */

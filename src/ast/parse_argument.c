@@ -22,7 +22,7 @@
 node_t *
 parse_argument(char **input, shell_t *shell)
 {
-    char *value = NULL;
+    char *value = DEFAULT(value);
     char *start = *input;
 
     while (**input != '\0' && **input != '|'

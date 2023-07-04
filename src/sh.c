@@ -21,7 +21,8 @@
 
 #ifndef DEBUG
     sigjmp_buf env_stack;
-    void catch_segv(int32_t sig)
+
+    _VOID void catch_segv(int32_t sig)
     {
         pfflush_wrapper(STDERR_FILENO, "SEGFAULT[%d]\n", sig);
         siglongjmp(env_stack, 1);
@@ -32,8 +33,8 @@ shell_conf_t globalConfig;
 
 void shell_engine(shell_t *shell, char **env)
 {
-    char *new_line = NULL;
-    call_alias_t *call_alias = NULL;
+    char *new_line = DEFAULT(new_line);
+    call_alias_t *call_alias = DEFAULT(call_alias);
     shell_requirement(shell, env, &call_alias);
 
     while (true) {

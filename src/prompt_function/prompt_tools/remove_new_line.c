@@ -23,6 +23,7 @@ void
 remove_newline(char *command)
 {
     int32_t len = _strlen(command);
+
     if (len > 0 && command[len - 1] == '\n') {
         command[len - 1] = '\0';
     }

@@ -21,9 +21,9 @@ void
 set_new_old_pwd(shell_t *shell, char *path, char *mess_env)
 {
     int32_t fmall = _strlen(path);
-    char *concat = NULL;
-    char *final = NULL;
-    char **diff = NULL;
+    char *concat = DEFAULT(concat);
+    char *final = DEFAULT(final);
+    char **diff = DEFAULT(diff);
 
     free_attribut(shell->get_line, shell);
     concat = concat_char_str(' ', mess_env, fmall, 1);
@@ -45,8 +45,10 @@ set_new_old_pwd(shell_t *shell, char *path, char *mess_env)
 int32_t
 build_cd_foo_extend(shell_t *shell, char **arg, char *home, int32_t len_arg)
 {
-    if (check_perm_dir(shell, home, 0) == 1)
+    if (check_perm_dir(shell, home, 0) == 1) {
         return 1;
+    }
+
     if ((home != NULL && len_arg == 1) ||
     ((_strcmp(arg[1], "~") == 0) && home != NULL)) {
         shell->cd_old_path = getcwd(NULL, 4096);
@@ -66,7 +68,9 @@ int32_t
 build_cd_foo(shell_t *shell, char *home, char **arg, int32_t len_arg)
 {
     struct stat st;
+
     home = find_home(shell, home);
+
     if (stat(home, &st) == -1 && len_arg == 1) {
         EXIT_W_ECHO_ERROR_("cd: Can't change to home directory.", 1);
     }
@@ -80,8 +84,10 @@ build_cd_foo(shell_t *shell, char *home, char **arg, int32_t len_arg)
     if ((home == NULL && len_arg == 1)) {
         EXIT_W_ECHO_ERROR_("cd: No home directory.", 1);
     }
-    if (home != NULL && build_cd_foo_extend(shell, arg, home, len_arg) == 1)
+    if (home != NULL && build_cd_foo_extend(shell, arg, home, len_arg) == 1) {
         return 1;
+    }
+
     return 0;
 }
 
@@ -105,6 +111,7 @@ build_cd_bar(shell_t *shell, char **arg)
         }
         return 1;
     }
+
     return 0;
 }
 
@@ -112,7 +119,7 @@ int32_t
 build_cd_foobar(shell_t *shell, char **arg,
     int32_t len_arg, uint32_t *invalid_cd)
 {
-    int32_t result = 0;
+    int32_t result = DEFAULT(result);
 
     if (len_arg == 2 && check_perm_dir(shell, arg[1], invalid_cd) == 0) {
         shell->cd_old_path = getcwd(NULL, 4096);

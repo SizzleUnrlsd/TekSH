@@ -50,33 +50,35 @@
 
 #define START_FIRST __attribute__((constructor(1000)))
 
+#define _VOID __attribute__((noreturn))
+
 #ifndef COMMAND_FOUND
-    #define COMMAND_FOUND \
-    shell->command_not_found++;  \
+    #define COMMAND_FOUND           \
+    shell->command_not_found++;     \
     shell->built_shell_type_env++;
 
 #endif
 
 #ifndef ERROR_MESSAGE_
     #define ERROR_MESSAGE_
-    #define SWITCH_ERROR_(mode, var2, var3)\
+    #define SWITCH_ERROR_(mode, var2, var3)         \
     if (mode == 0) print_str(var2, '\n', RD_TTY, 2);
 
 #endif
 
 #ifndef RETURN_VALUE_NO_VOID_
     #define RETURN_VALUE_NO_VOID_
-    #define EXIT_W_ECHO_ERROR_(str, return_value)\
-    if (return_value == 1 && RD_TTY == 1) { \
-        print_str(str, '\n', true, 2); \
-        shell->status = return_value; \
-        return return_value; \
+    #define EXIT_W_ECHO_ERROR_(str, return_value)   \
+    if (return_value == 1 && RD_TTY == 1) {         \
+        print_str(str, '\n', true, 2);              \
+        shell->status = return_value;               \
+        return return_value;                        \
     } \
-    if (return_value == 1 && RD_TTY == 0) { \
-        print_str(str, '\n', true, 2); \
-        shell->status = return_value; \
-        exit_shell(shell); \
-        exit(return_value); \
+    if (return_value == 1 && RD_TTY == 0) {         \
+        print_str(str, '\n', true, 2);              \
+        shell->status = return_value;               \
+        exit_shell(shell);                          \
+        exit(return_value);                         \
     }
 
 #endif
@@ -84,9 +86,9 @@
 #ifndef EXPECTED_EXIT_
     #define EXPECTED_EXIT_
     #define ENDING_PROCESS_(const_char, int_expected) \
-    print_str(const_char, '\n', RD_TTY, 1); \
-    exit_shell(shell); \
-    exit(int_expected); \
+    print_str(const_char, '\n', RD_TTY, 1);           \
+    exit_shell(shell);                                \
+    exit(int_expected);                               \
 
 #endif
 
@@ -144,39 +146,39 @@
 #endif
 
 #ifndef P_ERROR_
-    #define _p_error(error) \
-        do { \
-            char *_str; \
-            switch(error) { \
-                case _BUF_ERROR: \
-                    _str = "Buffer Error"; \
-                    break; \
-                case _FORK_ERROR: \
-                    _str = "Fork Error"; \
-                    break; \
-                case _FILE_ERROR: \
-                    _str = "File Error"; \
-                    break; \
-                case _WRITE_ERROR: \
-                    _str = "Write Error"; \
-                    break; \
-                case _CONST_BUF_ERROR: \
-                    _str = "Constant Buffer Error"; \
-                    break; \
-                case _MEM_ALLOCA_ERROR: \
-                    _str = "Memory Allocation Error"; \
-                    break; \
-                case _THREAD_ALLOCA_ERROR: \
-                    _str = "Thread Allocation Error"; \
-                    break; \
-                case _PIPE_ERROR: \
-                    _str = "Pipe Error"; \
-                    break; \
-                default: \
-                    _str = "Unknown Error"; \
-                    break; \
-            } \
-            print_str(_str, 0, true, STDERR_FILENO); \
+    #define _p_error(error)                             \
+        do {                                            \
+            char *_str;                                 \
+            switch(error) {                             \
+                case _BUF_ERROR:                        \
+                    _str = "Buffer Error";              \
+                    break;                              \
+                case _FORK_ERROR:                       \
+                    _str = "Fork Error";                \
+                    break;                              \
+                case _FILE_ERROR:                       \
+                    _str = "File Error";                \
+                    break;                              \
+                case _WRITE_ERROR:                      \
+                    _str = "Write Error";               \
+                    break;                              \
+                case _CONST_BUF_ERROR:                  \
+                    _str = "Constant Buffer Error";     \
+                    break;                              \
+                case _MEM_ALLOCA_ERROR:                 \
+                    _str = "Memory Allocation Error";   \
+                    break;                              \
+                case _THREAD_ALLOCA_ERROR:              \
+                    _str = "Thread Allocation Error";   \
+                    break;                              \
+                case _PIPE_ERROR:                       \
+                    _str = "Pipe Error";                \
+                    break;                              \
+                default:                                \
+                    _str = "Unknown Error";             \
+                    break;                              \
+            }                                           \
+            print_str(_str, 0, true, STDERR_FILENO);    \
         } while(0)
 #endif
 
@@ -189,21 +191,21 @@
 
 #ifndef _DEFAULT_VAR_
     #define _DEFAULT_VAR_
-    #define DEFAULT(x) _Generic((x), \
-    int32_t: 0, \
-    uint32_t: 0, \
-    float: 0.0f, \
-    double: 0.0, \
-    char: '\0', \
-    size_t: (size_t)0, \
+    #define DEFAULT(x) _Generic((x),    \
+    int32_t: 0,                         \
+    uint32_t: 0,                        \
+    float: 0.0f,                        \
+    double: 0.0,                        \
+    char: '\0',                         \
+    size_t: (size_t)0,                  \
     default: NULL)
 
 #endif
 
 #ifndef _INIT_VAR_
     #define _INITI_VAR_
-    #define INIT(x) _Generic((x), \
-        char[sizeof(x)]: (void)INIT_ARRAY(x), \
+    #define INIT(x) _Generic((x),               \
+        char[sizeof(x)]: (void)INIT_ARRAY(x),   \
         default: memset(&(x), 0, sizeof(x)))
 
 #endif

@@ -38,6 +38,7 @@ wildcard_transform_loop(wildcard_t *wildcard, regex_t *regex,
             return 8;
         }
     }
+
     return 0;
 }
 
@@ -58,5 +59,6 @@ wildcard_transform(wildcard_t *wildcard, char *format)
     regfree(&regex);
     word_array = strdup(buffer_get_data(buffer));
     terminate_buffer(buffer);
+
     return word_array;
 }

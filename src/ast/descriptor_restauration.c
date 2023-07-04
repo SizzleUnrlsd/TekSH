@@ -20,9 +20,9 @@
 #include "shell.h"
 
 void
-save_descriptor(int32_t *save_0, int32_t *save_1, bool tty)
+save_descriptor(int32_t *save_0, int32_t *save_1, bool _tty)
 {
-    if (tty) {
+    if (_tty) {
         (*save_0) = dup(1);
         (*save_1) = dup(0);
     }
@@ -30,9 +30,9 @@ save_descriptor(int32_t *save_0, int32_t *save_1, bool tty)
 }
 
 void
-descriptor_restoration(int32_t save_0, int32_t save_1, bool tty)
+descriptor_restoration(int32_t save_0, int32_t save_1, bool _tty)
 {
-    if (tty) {
+    if (_tty) {
         dup2(save_0, 0);
         dup2(save_1, 1);
     }
