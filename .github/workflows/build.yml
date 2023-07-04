@@ -14,9 +14,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up Docker
-      uses: docker/setup-docker@v1
+      uses: docker/setup-buildx-action@v1
 
-    - name: Build
+    - name: Build and Test
       run: |
-        chmod +x test_build.sh
-        ./test_build.sh
+        chmod +x tests/test_build.sh
+        ./tests/test_build.sh
