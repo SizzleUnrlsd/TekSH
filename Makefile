@@ -96,3 +96,6 @@ tests_run:	$(TEST_BIN)
 
 tests_build:
 	cd tests && ./test_build.sh
+
+tests_build_verbose:
+	cd tests && ./test_build.sh --verbose

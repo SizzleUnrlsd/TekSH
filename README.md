@@ -118,6 +118,12 @@ Tests are carried out for each distribution. Run the tests with the following co
 make tests_build
 ```
 
+For verbosity:
+
+```
+make tests_build_verbose
+```
+
 Other distributions will be tested soon !
 
 ## Compatible architecture

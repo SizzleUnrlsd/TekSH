@@ -3,6 +3,7 @@
 make
 
 make_exit_code=$?
+
 if [[ $make_exit_code != 0 ]]; then
     echo "Error : Compilation failure"
     exit 1
@@ -29,3 +30,4 @@ function run_command {
 run_command "ls"
 run_command "ls ; ls"
 run_command "ls -a > toto ; cat toto"
+run_command "ls | rev > toto ; cat toto ; rm toto ; ls -alt | cat | cat | cat > toto ; cat toto ; rm toto"
