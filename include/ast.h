@@ -53,7 +53,7 @@
     char *node_to_string(node_t *node);
     void ast(node_t *node, shell_t *shell);
     int32_t ast_final(char *command, shell_t *shell);
-    void save_descriptor(int32_t *save_0, int32_t *save_1);
-    void descriptor_restoration(int32_t save_0, int32_t save_1);
+    void save_descriptor(int32_t *save_0, int32_t *save_1, bool tty);
+    void descriptor_restoration(int32_t save_0, int32_t save_1, bool tty);
 
 #endif /* !AST_H_ */

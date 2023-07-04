@@ -23,6 +23,8 @@ volatile sig_atomic_t interrupt_flag = 0;
 
 static volatile sig_atomic_t keep_running = 1;
 
+static bool _tty = false;
+
 char *detail = NULL;
 
 int load_history(const char *filename)
@@ -85,6 +87,7 @@ static char *concat_str(const char *str1, const char *str2, ...)
     return result;
 }
 
+/* Prompt design */
 char *set_promt(void)
 {
     char prompt[256] = {0};
@@ -92,22 +95,28 @@ char *set_promt(void)
     char *reset = "\033[0m";
     char start = '{';
     char end = '}';
+
     if (strcmp("UNDEFINE", getgit_branch()) != 0)
         sprintf(prompt, "\033[1;34m%c \033[1;31m%s\033[0m \033[1;34m%c %s", start, getgit_branch(), end, reset);
+    else
+        sprintf(prompt, " ");
 
     _detail = concat_str("\033[0;34m[", reset, get_dir(), "\033[0;34m]", reset, prompt, NULL);
     return strdup(_detail);
 }
 
+/* Sigint management */
 void inthand(int32_t signum __attribute__((unused)))
 {
-    rl_free_line_state();
-    rl_cleanup_after_signal();
-    _print("\n");
-    _print(ANSI_BOLD_ON);
-    _print(ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET);
-    _print(detail);
-    fflush(stdout);
+    if (_tty) {
+        rl_free_line_state();
+        rl_cleanup_after_signal();
+        _print("\n");
+        _print(ANSI_BOLD_ON);
+        _print(ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET);
+        _print(detail);
+        fflush(stdout);
+    }
 }
 
 int32_t prompt_shell(shell_t *shell)
@@ -115,10 +124,17 @@ int32_t prompt_shell(shell_t *shell)
     char *line = DEFAULT(line);
     static int32_t first_call = 1;
     struct termios old_termios, new_termios;
+
+    /* If the shell is not in tty mode, use getline() */
+    size_t len = 0;
+    ssize_t read;
+
     tcgetattr(STDIN_FILENO, &old_termios);
     new_termios = old_termios;
     new_termios.c_lflag &= ~ECHOCTL;
     tcsetattr(STDIN_FILENO, TCSANOW, &new_termios);
+
+    _tty = shell->print;
 
     signal(SIGINT, inthand);
     if (first_call) {
@@ -134,17 +150,29 @@ int32_t prompt_shell(shell_t *shell)
     garbage_collector(detail, shell);
 
     do {
-        if (shell->status == 0) {
+        if (shell->status == 0 && RD_TTY) {
             _print(ANSI_BOLD_ON);
             _print(ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET);
-        } else {
+        } else if (shell->status != 0 && RD_TTY) {
             _print(ANSI_BOLD_ON);
             _print(ANSI_COLOR_RED "•" ANSI_COLOR_RESET);
         }
-        line = readline(detail);
+
+        /* Not in the tty*/
+        if (!_tty) {
+            read = getline(&line, &len, stdin);
+        }
+        if (read == -1) {
+            exit(shell->status);
+        }
+
+        /* In the tty */
+        if (_tty)
+            line = readline(detail);
         if (!line) {
             return 42;
         }
+
         garbage_collector(line, shell);
         if (errno == EINTR) {
             continue;
@@ -162,6 +190,7 @@ int32_t prompt_shell(shell_t *shell)
             print_str(detail, 0, RD_TTY, 1);
         }
     } while (!line || !*line);
+
     return 0;
 }
 
