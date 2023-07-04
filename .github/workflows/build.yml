@@ -1,0 +1,22 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: docker/setup-docker@v1
+
+    - name: Build
+      run: |
+        chmod +x test_build.sh
+        ./test_build.sh
