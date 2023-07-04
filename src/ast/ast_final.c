@@ -53,6 +53,7 @@ ast(node_t *node, shell_t *shell)
             break;
         case NODE_ARGUMENT:
             {
+            /* Exceptional encapsulation due to variable declaration within the switch. */
             char *tmp = NULL;
             char **arg = NULL;
 

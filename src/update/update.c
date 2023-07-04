@@ -19,7 +19,7 @@
 
 #include "shell.h"
 
-static shell_t *_global_shell;
+// static shell_t *_global_shell;
 
 char *get_readme_from_github(const char* repo_owner, const char* repo_name)
 {
@@ -146,11 +146,13 @@ check_current_version(const char *version)
     return 0;
 }
 
-int check_version(shell_t *_shell)
+START_FIRST int
+check_version(shell_t *_shell)
 {
     const char *version = DEFAULT(version);
     char *readme = get_readme_from_github("SizzleUnrlsd", "TekSH");
-    _global_shell = _shell;
+    // _global_shell = _shell;
+    (void) _shell;
 
     if (!readme){
         return !!_BUF_ERROR;

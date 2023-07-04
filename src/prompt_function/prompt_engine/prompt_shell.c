@@ -106,7 +106,7 @@ char *set_promt(void)
 }
 
 /* Sigint management */
-void inthand(int32_t signum __attribute__((unused)))
+void inthand(int32_t signum UNUSED_ARG)
 {
     if (_tty) {
         rl_free_line_state();
