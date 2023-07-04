@@ -49,19 +49,19 @@ void shell_engine(shell_t *shell, char **env)
             shell->get_line = strdup(new_line);
         }
 
-        #ifndef DEBUG
-            if (sigsetjmp(env_stack, 1) == 0) {
-                ast_final(shell->get_line, shell);
-            } else {
-                FILE* file = fopen("mini_dump/error_promt_cmd", "a");
-                char log[256];
-                sprintf(log, "%s/%s", shell->get_line, ARCH);
-                fprintf(file, "%s\n", log);
-                fclose(file);
-            }
-        #else
+#ifndef DEBUG
+        if (sigsetjmp(env_stack, 1) == 0) {
             ast_final(shell->get_line, shell);
-        #endif
+        } else {
+            FILE* file = fopen("mini_dump/error_promt_cmd", "a");
+            char log[256];
+            sprintf(log, "%s/%s", shell->get_line, ARCH);
+            fprintf(file, "%s\n", log);
+            fclose(file);
+        }
+#else
+        ast_final(shell->get_line, shell);
+#endif
     }
 }
 
@@ -71,10 +71,9 @@ shell_theme()
     // work in progress
 }
 
-int main(int32_t ac, char **av, char **env)
+int main(int32_t ac UNUSED_ARG, char **av, char **env)
 {
     shell_t *shell = DEFAULT(shell);
-    pid_t pid;
     parse_arg(ac, av);
 
 #ifndef DEBUG
@@ -83,16 +82,6 @@ int main(int32_t ac, char **av, char **env)
 
     shell = init_shell();
     shell_theme();
-
-    pid = fork();
-    if (pid == 0) {
-        check_version(shell);
-    }
-    if (pid != 0) {
-        if (waitpid(pid, NULL, 0) == -1) {
-            return !!_FORK_ERROR;
-        }
-        shell_engine(shell, env);
-    }
+    shell_engine(shell, env);
     return 0;
 }

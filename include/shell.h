@@ -46,6 +46,10 @@
     #define ARCH "_ERROR"
 #endif
 
+#define UNUSED_ARG __attribute__((unused))
+
+#define START_FIRST __attribute__((constructor(1000)))
+
 #ifndef COMMAND_FOUND
     #define COMMAND_FOUND \
     shell->command_not_found++;  \
