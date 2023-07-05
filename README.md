@@ -16,7 +16,7 @@ You are welcome to join us !
 git clone https://github.com/SizzleUnrlsd/TekSH
 ```
 ```
-make
+cd Teksh && make
 ```
 ```
 ./teksh
