@@ -144,23 +144,32 @@ check_current_version(const char *version)
     return 0;
 }
 
-START_FIRST int
+START_FIRST void
 check_version(void)
 {
     const char *version = DEFAULT(version);
-    char *readme = get_readme_from_github("SizzleUnrlsd", "TekSH");
+    char *readme = DEFAULT(readme);
+
+    /* If out of tty, disable update check. */
+    if (!isatty(STDIN_FILENO)) {
+        return;
+    }
+
+    /* Set variables later for optimisation purposes. */
+    version = DEFAULT(version);
+    readme = get_readme_from_github("SizzleUnrlsd", "TekSH");
 
     if (!readme){
-        return !!_BUF_ERROR;
+        exit(!!_BUF_ERROR);
     }
  
     version = find_version(readme);
     if (!version) {
-        return !!_CONST_BUF_ERROR;
+        exit(!!_CONST_BUF_ERROR);
     }
     if (check_current_version(version)) {
         update_services();
     }
 
-    return 0;
+    return;
 }
