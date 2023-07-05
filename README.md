@@ -16,7 +16,7 @@ You are welcome to join us !
 git clone https://github.com/SizzleUnrlsd/TekSH
 ```
 ```
-make
+cd Teksh && make
 ```
 ```
 ./teksh
@@ -188,7 +188,7 @@ You can help by sharing this file in case of a bug.
 - [ ] Improved memory utilisation
 - [ ] Advanced input/output management
 - [ ] Add architecture tests.
-- [ ] GitHub action.
+- [ ] Improving tests and Github Action.
 
 **Note :** This roadmap is subject to change and will be updated as the project evolves.
 

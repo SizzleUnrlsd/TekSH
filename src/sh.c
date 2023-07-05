@@ -75,6 +75,7 @@ shell_theme()
 int main(int32_t ac UNUSED_ARG, char **av, char **env)
 {
     shell_t *shell = DEFAULT(shell);
+
     parse_arg(ac, av);
 
 #ifndef DEBUG
