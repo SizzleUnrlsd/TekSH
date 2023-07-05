@@ -124,6 +124,7 @@ A new update system will be coming soon.
 - [ ] [Fedora]
 - [ ] [Debian]
 - [ ] [Archlinux]
+- [ ] [Raspeberry Pi OS (Test in development)]
 
 Tests are carried out for each distribution. Run the tests with the following command:
 
