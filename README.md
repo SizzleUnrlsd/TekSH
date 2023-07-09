@@ -1,5 +1,5 @@
 # TekSH
-Version 1.2.3
+Version 1.3.4
 <img src="https://t.bkit.co/w_64925db39b56d.gif" />
 -----------------
 
