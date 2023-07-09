@@ -128,10 +128,10 @@ int32_t prompt_shell(shell_t *shell)
     struct termios old_termios, new_termios;
 
     /* If the shell is not in tty mode, use getline() */
-    size_t len = 0;
+    size_t len = DEFAULT(len);
     ssize_t read;
 
-    static int screen_height = 0, screen_width = 0;
+    static int32_t screen_height = DEFAULT(screen_height), screen_width = DEFAULT(screen_width);
     rl_get_screen_size(&screen_height, &screen_width);
     rl_set_screen_size(1000, screen_height);
 
