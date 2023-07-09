@@ -46,6 +46,13 @@
     #define ARCH "_ERROR"
 #endif
 
+#ifndef JOB_CONTROL_
+    #define JOB_CONTROL_
+    extern uint32_t job_control;
+    extern uint32_t supposed_job_control;
+
+#endif
+
 #define UNUSED_ARG __attribute__((unused))
 
 #define START_FIRST __attribute__((constructor(1000)))
@@ -107,7 +114,8 @@
 #ifndef ERROR_TYPE_VALUE_
     #define ERROR_TYPE_VALUE_
     enum _error_code {
-        _BUF_ERROR = 2,
+        _BUF_ERROR = 1,
+        _READ_ERROR = 2,
         _FORK_ERROR = 3,
         _FILE_ERROR = 4,
         _WRITE_ERROR = 5,
@@ -162,6 +170,9 @@
                 case _WRITE_ERROR:                      \
                     _str = "Write Error";               \
                     break;                              \
+                case _READ_ERROR:                       \
+                    _str = "Write Read";                \
+                    break;                              \
                 case _CONST_BUF_ERROR:                  \
                     _str = "Constant Buffer Error";     \
                     break;                              \
@@ -197,7 +208,9 @@
     float: 0.0f,                        \
     double: 0.0,                        \
     char: '\0',                         \
+    unsigned char: 0,                   \
     size_t: (size_t)0,                  \
+    ssize_t: (ssize_t)0,                \
     default: NULL)
 
 #endif

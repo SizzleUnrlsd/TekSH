@@ -19,7 +19,7 @@
 
 #include "shell.h"
 
-volatile sig_atomic_t interrupt_flag = 0;
+volatile sig_atomic_t interrupt_flag = DEFAULT(interrupt_flag);
 
 static volatile sig_atomic_t keep_running = 1;
 
@@ -90,7 +90,7 @@ static char *concat_str(const char *str1, const char *str2, ...)
 /* Prompt design */
 char *set_promt(void)
 {
-    char prompt[256] = {0};
+    char prompt[512] = {0};
     char *_detail = DEFAULT(_detail);
     char *reset = "\033[0m";
     char start = '{';
@@ -109,13 +109,15 @@ char *set_promt(void)
 void inthand(int32_t signum UNUSED_ARG)
 {
     if (_tty) {
-        rl_free_line_state();
-        rl_cleanup_after_signal();
+        /* Handles the case where the prompt buffer is full */
+        rl_replace_line("", 0);
+        rl_redisplay();
         _print("\n");
         _print(ANSI_BOLD_ON);
         _print(ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET);
         _print(detail);
         fflush(stdout);
+        rl_cleanup_after_signal();
     }
 }
 
@@ -129,6 +131,10 @@ int32_t prompt_shell(shell_t *shell)
     size_t len = 0;
     ssize_t read;
 
+    static int screen_height = 0, screen_width = 0;
+    rl_get_screen_size(&screen_height, &screen_width);
+    rl_set_screen_size(1000, screen_height);
+
     tcgetattr(STDIN_FILENO, &old_termios);
     new_termios = old_termios;
     new_termios.c_lflag &= ~ECHOCTL;
@@ -138,6 +144,7 @@ int32_t prompt_shell(shell_t *shell)
 
     signal(SIGINT, inthand);
     if (first_call) {
+        rl_extend_line_buffer(1024);
         first_call = 0;
         load_history("history.txt");
         rl_attempted_completion_function = command_completion;
@@ -167,8 +174,9 @@ int32_t prompt_shell(shell_t *shell)
         }
 
         /* In the tty */
-        if (_tty)
+        if (_tty) {
             line = readline(detail);
+        }
         if (!line) {
             return 42;
         }
@@ -193,4 +201,3 @@ int32_t prompt_shell(shell_t *shell)
 
     return 0;
 }
-

@@ -20,15 +20,16 @@
 #include "shell.h"
 
 node_t *
-parse_semicolon(char **input, shell_t *shell)
+parse_job_control(char **input, shell_t *shell)
 {
     node_t *right = DEFAULT(right);
-    node_t *left = parse_and_or(input, shell);
+    node_t *left = parse_pipe(input, shell);
 
-    if (**input == ';') {
+    if (**input == '&' && *(*input + 1) != '&') {
         (*input)++;
-        right = parse_semicolon(input, shell);
-        return create_node(NODE_SEMICOLON, NULL, left, right, shell);
+        ++supposed_job_control;
+        right = parse_job_control(input, shell);
+        return create_node(NODE_BACK, NULL, left, right, shell);
     }
     return left;
 }

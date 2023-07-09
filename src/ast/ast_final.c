@@ -51,11 +51,15 @@ ast(node_t *node, shell_t *shell)
                 break;
             ast(node->right, shell);
             break;
+        case NODE_BACK:
+            ampersand(node_to_string(node->left), node->left, shell);
+            ast(node->right, shell);
+            break;
         case NODE_ARGUMENT:
             {
             /* Exceptional encapsulation due to variable declaration within the switch. */
-            char *tmp = NULL;
-            char **arg = NULL;
+            char *tmp = DEFAULT(tmp);
+            char **arg = DEFAULT(arg);
 
             shell->get_line = node->value;
             tmp = update_wildcard(node->value, shell);

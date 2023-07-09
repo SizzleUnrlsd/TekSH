@@ -23,7 +23,7 @@ node_t *
 parse_and_or(char **input, shell_t *shell)
 {
     node_t *right = DEFAULT(right);
-    node_t *left = parse_pipe(input, shell);
+    node_t *left = parse_job_control(input, shell);
     nodetype type;
 
     if (**input == '&' && *(*input + 1) == '&') {

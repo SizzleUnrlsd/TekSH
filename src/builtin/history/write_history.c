@@ -32,7 +32,7 @@ void check_replace_in_file(int found, FILE *fd, int pos, shell_t *shell)
 
 int replace_line_in_file(shell_t *shell, FILE *fd, int *pos, int *found)
 {
-    int n =  DEFAULT(n);
+    int32_t n =  DEFAULT(n);
     char *command = DEFAULT(command);
     char *cut_time = DEFAULT(cut_time);
     char *num = strtok(shell->history->line, "\t");
@@ -61,14 +61,15 @@ int write_in_file(shell_t *shell)
     time_t now = time(NULL);
     struct tm *local_time = localtime(&now);
     FILE *fd = fopen("42sh_history", "r+");
-    size_t len = DEFAULT(len); int found = DEFAULT(found), pos = DEFAULT(pos);
+    size_t len = DEFAULT(len);
+    int32_t found = DEFAULT(found), pos = DEFAULT(pos);
 
     shell->history->hour = local_time->tm_hour;
     shell->history->minute = local_time->tm_min;
     if (fd == NULL) {
         return !!_FILE_ERROR;
     }
-    shell->history->line = NULL;
+    shell->history->line = DEFAULT(shell->history->line);
     while ((shell->history->read =
     getline(&shell->history->line, &len, fd)) != -1) {
         if (replace_line_in_file(shell, fd, &pos, &found) == 1)
