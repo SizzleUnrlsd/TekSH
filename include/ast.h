@@ -30,6 +30,7 @@
         NODE_ARGUMENT = 6,
         NODE_AND = 7,
         NODE_OR = 8,
+        NODE_BACK = 9,
     } nodetype;
 
     typedef struct node_s {
@@ -46,8 +47,10 @@
     node_t *parse_argument(char **input, shell_t *shell);
     node_t *parse_semicolon(char **input, shell_t *shell);
     node_t *parse_and_or(char **input, shell_t *shell);
+    node_t *parse_job_control(char **input, shell_t *shell);
     int32_t execute_pipeline(node_t *cmd1_node, node_t *cmd2_node,
     shell_t *shell);
+    void ampersand(char *input, node_t *node, shell_t *shell);
     void redirection_append(node_t *node, shell_t *shell);
     void redirection_dup_in(node_t *node, shell_t *shell);
     char *node_to_string(node_t *node);

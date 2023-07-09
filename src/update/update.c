@@ -147,6 +147,7 @@ check_current_version(const char *version)
 START_FIRST void
 check_version(void)
 {
+
     const char *version = DEFAULT(version);
     char *readme = DEFAULT(readme);
 
