@@ -190,8 +190,16 @@ You can help by sharing this file in case of a bug.
 - [ ] Advanced input/output management
 - [ ] Add architecture tests.
 - [ ] Improving tests and Github Action.
+- [ ] File descriptor management
 
 **Note :** This roadmap is subject to change and will be updated as the project evolves.
+
+## Recently Added/Patched 
+
+- [ ] Add : job control
+- [ ] fix : multiple-pipe
+- [ ] Fix : Output management outside tty
+- [ ] Improve : Improved update system
 
 ## Contributing
 
