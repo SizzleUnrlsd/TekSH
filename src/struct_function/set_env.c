@@ -20,14 +20,14 @@
 #include "shell.h"
 
 void
-retrieve_env(shell_t *shell, char **env)
+init_env(shell_t *shell, char **env)
 {
     uint32_t full_size = len_array(env) + 1;
 
     if ((full_size - 1) == 0) {
         char *env_null[] =
-        {"HOSTTYPE=x86_64-linux", "VENDOR=unknown", "OSTYPE=linux",
-        "MACHTYPE=x86_64", "SHLVL=1", "PWD=/home/hugo/test_compilation/B-PSU-200-RUN-2-1-42sh-hugo.payet", NULL};
+        {"HOSTTYPE=", "VENDOR=", "OSTYPE=",
+        "MACHTYPE=", "SHLVL=1", "PWD=", NULL};
         
         shell->set_env = (set_env_t*)malloc_attribut(sizeof(set_env_t), shell);
         shell->set_env->env_array = (char**)malloc_attribut(sizeof(char *) * 7, shell);

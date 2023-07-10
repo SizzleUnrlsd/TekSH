@@ -72,7 +72,7 @@
     int32_t len_array(char **array);
     char *remove_back_n(char *src);
     void print_array(char **array, char c);
-    void retrieve_env(shell_t *shell, char **env);
+    void init_env(shell_t *shell, char **env);
     void print_str(char const *str, char c, bool print, int32_t fd);
     char *del_one_char(shell_t *shell, char **src, char *dest);
     char *concat_char_str(char concat, char *str, int32_t futur, int32_t a);
