@@ -1,19 +1,21 @@
 /**
-* {{ project }}
-* Copyright (C) {{ year }}  {{ organization }}
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2023 hugo
+ * 
+ * This file is part of TekSH.
+ * 
+ * TekSH is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * TekSH is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with TekSH.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "shell.h"
 
@@ -56,12 +58,12 @@ int execute_command_exclamation(int *read, int *nb, shell_t *shell)
 
 int32_t find_in_file(shell_t *shell, int nb)
 {
-    size_t len = 0;
-    int32_t total = 0, read = 0;
-    FILE *fd = fopen(PATH_HISTORY_FILE, "r");
+    size_t len = DEFAULT(len);
+    int32_t total = DEFAULT(total), read = DEFAULT(read);
+    FILE *fd = fopen("history.txt", "r");
     if (fd == NULL)
         return 1;
-    shell->history->line = NULL;
+    shell->history->line = RESET(shell->history->line);
     while ((read = getline(&shell->history->line, &len, fd)) != -1) {
         if (shell->history->line[read - 1] == '\n')
             total++;
@@ -78,10 +80,10 @@ int32_t find_in_file(shell_t *shell, int nb)
     return 1;
 }
 
-int32_t
+__attribute__((deprecated)) int32_t
 builtin_exclamation(shell_t *shell)
 {
-    int32_t future_shell_value = 0;
+    int32_t future_shell_value = DEFAULT(future_shell_value);
     char *cmd = strdup(shell->get_line);
     COMMAND_FOUND;
 
