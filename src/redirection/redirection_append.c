@@ -40,7 +40,7 @@ redirection_append_extend(node_t *node, ...)
     }
     close(fd);
     execute_command(args, shell);
-    exit(0);
+    _exit(0);
     va_end(ap);
     return;
 }
@@ -56,7 +56,7 @@ redirection_append_extend_extend(node_t *node, char *file, int32_t *fd)
         *fd = open(file, O_RDONLY);
     }
     if (*fd < 0) {
-        exit(0);
+        _exit(0);
     }
     return;
 }
@@ -64,15 +64,19 @@ redirection_append_extend_extend(node_t *node, char *file, int32_t *fd)
 void
 redirection_append(node_t *node, shell_t *shell)
 {
+    int32_t status = DEFAULT(status);
+    int32_t fd = DEFAULT(fd);
+    char *args[128] = {0};
+    char *cmd = DEFAULT(cmd);
+    char *file = DEFAULT(file);
+
     pid_t pid = fork();
     if (pid < 0) {
         return;
     }
     if (pid == 0) {
-        int32_t fd = 0;
-        char *args[128] = {0};
-        char *cmd = node_to_string(node->left);
-        char *file = node_to_string(node->right);
+        cmd = node_to_string(node->left);
+        file = node_to_string(node->right);
         garbage_collector(cmd, shell); garbage_collector(file, shell);
         if (cmd == NULL) {
             ast(node->left, shell);
@@ -86,7 +90,7 @@ redirection_append(node_t *node, shell_t *shell)
         redirection_append_extend_extend(node, file, &fd);
         redirection_append_extend(node, shell, fd, args);
     } else {
-        int32_t status = 0;
+        status = 0;
         waitpid(pid, &status, 0);
     }
     return;

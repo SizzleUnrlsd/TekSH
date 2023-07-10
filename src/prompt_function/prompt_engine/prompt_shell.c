@@ -25,7 +25,7 @@ static volatile sig_atomic_t keep_running = 1;
 
 static bool _tty = false;
 
-char *detail = NULL;
+char *detail = DEFAULT(detail);
 
 int load_history(const char *filename)
 {
@@ -121,15 +121,16 @@ void inthand(int32_t signum UNUSED_ARG)
     }
 }
 
-int32_t prompt_shell(shell_t *shell)
+_wur int32_t
+prompt_shell(shell_t *shell)
 {
     char *line = DEFAULT(line);
-    static int32_t first_call = 1;
+    static int32_t first_call = true;
     struct termios old_termios, new_termios;
 
     /* If the shell is not in tty mode, use getline() */
     size_t len = DEFAULT(len);
-    ssize_t read;
+    ssize_t read = DEFAULT(read);
 
     static int32_t screen_height = DEFAULT(screen_height), screen_width = DEFAULT(screen_width);
     rl_get_screen_size(&screen_height, &screen_width);
@@ -144,8 +145,12 @@ int32_t prompt_shell(shell_t *shell)
 
     signal(SIGINT, inthand);
     if (first_call) {
+        /* The 'rl_initialize()' function must be called once before the first call to readline.
+            Otherwise it may cause problems with the display of the prompt.
+            In addition, its presence is necessary to avoid initialization memory errors. */
+        rl_initialize();
         rl_extend_line_buffer(1024);
-        first_call = 0;
+        first_call = false;
         load_history("history.txt");
         rl_attempted_completion_function = command_completion;
     }
