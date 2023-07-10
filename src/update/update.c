@@ -149,7 +149,7 @@ check_version(void)
 {
 
     const char *version = DEFAULT(version);
-    char *readme = DEFAULT(readme);
+    const char *readme = DEFAULT(readme);
 
     /* If out of tty, disable update check. */
     if (!isatty(STDIN_FILENO)) {

@@ -55,7 +55,7 @@ void shell_engine(shell_t *shell, char **env)
             ast_final(shell->get_line, shell);
         } else {
             FILE* file = fopen("mini_dump/error_promt_cmd", "a");
-            char log[256];
+            char log[256] = {0};
             sprintf(log, "%s/%s", shell->get_line, ARCH);
             fprintf(file, "%s\n", log);
             fclose(file);
