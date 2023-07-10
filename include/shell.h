@@ -32,8 +32,6 @@
     #include "set_unset.h"
     #include "plugin.h"
 
-#endif /* SHELL_H_ */
-
 #ifdef __x86_64__
     #define ARCH "_x86_64"
 #elif __i386__
@@ -46,18 +44,20 @@
     #define ARCH "_ERROR"
 #endif
 
+#define UNUSED_ARG __attribute__((unused))
+
+#define START_FIRST __attribute__((constructor(1000)))
+
+#define _VOID __attribute__((noreturn))
+
+#define _wur __attribute__((__warn_unused_result__))
+
 #ifndef JOB_CONTROL_
     #define JOB_CONTROL_
     extern uint32_t job_control;
     extern uint32_t supposed_job_control;
 
 #endif
-
-#define UNUSED_ARG __attribute__((unused))
-
-#define START_FIRST __attribute__((constructor(1000)))
-
-#define _VOID __attribute__((noreturn))
 
 #ifndef COMMAND_FOUND
     #define COMMAND_FOUND           \
@@ -80,7 +80,7 @@
         print_str(str, '\n', true, 2);              \
         shell->status = return_value;               \
         return return_value;                        \
-    } \
+    }                                               \
     if (return_value == 1 && RD_TTY == 0) {         \
         print_str(str, '\n', true, 2);              \
         shell->status = return_value;               \
@@ -193,7 +193,6 @@
         } while(0)
 #endif
 
-
 #ifndef GLOBAL_BUFFER_SHELL_THEME_H
     #define GLOBAL_BUFFER_SHELL_THEME_H
 
@@ -211,6 +210,23 @@
     unsigned char: 0,                   \
     size_t: (size_t)0,                  \
     ssize_t: (ssize_t)0,                \
+    void*: NULL,                        \
+    default: NULL)
+
+#endif
+
+#ifndef _RESET_VAR_
+    #define _RESET_VAR_
+    #define RESET(x) _Generic((x),      \
+    int32_t: 0,                         \
+    uint32_t: 0,                        \
+    float: 0.0f,                        \
+    double: 0.0,                        \
+    char: '\0',                         \
+    unsigned char: 0,                   \
+    size_t: (size_t)0,                  \
+    ssize_t: (ssize_t)0,                \
+    void*: NULL,                        \
     default: NULL)
 
 #endif
@@ -222,3 +238,5 @@
         default: memset(&(x), 0, sizeof(x)))
 
 #endif
+
+#endif /* SHELL_H_ */
