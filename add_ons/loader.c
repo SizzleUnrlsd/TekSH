@@ -30,8 +30,8 @@
 int32_t
 load_and_run_plugin(char *plugin_name, char *function_name, char *command)
 {
-    void *handle = NULL;
-    char *error = NULL;
+    void *handle = DEFAULT(handle);
+    char *error = DEFAULT(error);
     plugin_func func;
 
     handle = dlopen(plugin_name, RTLD_LAZY);
@@ -110,8 +110,9 @@ concat_str(const char *str1, const char *str2)
 int32_t
 loader(shell_t *shell, char **command)
 {
-    uint32_t lib_index = 0;
-    int32_t command_status = 0;
+    uint32_t lib_index = DEFAULT(lib_index);
+    int32_t command_status = DEFAULT(command_status);
+
     char **libraries = get_shared_libraries("plugins/add_ons/plugins/", &lib_index);
     if (!libraries)
         return 0;
