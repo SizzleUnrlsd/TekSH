@@ -79,7 +79,8 @@ ast(node_t *node, shell_t *shell)
 int32_t
 ast_final(char *command, shell_t *shell)
 {
-    int32_t save_0 = DEFAULT(save_0), save_1 = DEFAULT(save_1);
+    int32_t save_0 = DEFAULT(save_0);
+    int32_t save_1 = DEFAULT(save_1);
     node_t *root = parse_semicolon(&command, shell);
 
     save_descriptor(&save_0, &save_1, shell->print);

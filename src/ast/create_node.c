@@ -22,10 +22,10 @@
 node_t *
 create_node(nodetype type, char *value, ...)
 {
-    node_t *left = NULL;
-    node_t *right = NULL;
-    shell_t *shell = NULL;
-    node_t *node = NULL;
+    node_t *left = DEFAULT(left);
+    node_t *right = DEFAULT(right);
+    shell_t *shell = DEFAULT(shell);
+    node_t *node = DEFAULT(node);
 
     va_list ap;
     va_start(ap, value);

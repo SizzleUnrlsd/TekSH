@@ -32,10 +32,13 @@ terminate_pipe(shell_t *shell, int32_t *pipefd, ...)
 
     rt_1 = va_arg(args, int32_t);
     rt_2 = va_arg(args, int32_t);
-    if (rt_1 == 0 && rt_2 == 0)
+
+    if (rt_1 == 0 && rt_2 == 0) {
         shell->status = 0;
-    if (rt_1 != 0 || rt_2 != 0)
+    }
+    if (rt_1 != 0 || rt_2 != 0) {
         shell->status = 1;
+    }
     va_end(args);
 }
 
@@ -46,22 +49,22 @@ pipe_child_process(shell_t *shell, pid_t pid1, int32_t *pipefd,
     uint32_t return_value_shell_1 = DEFAULT(return_value_shell_1);
 
     if (pid1 == 0) {
-        shell->status = DEFAULT(shell->status);
+        shell->status = RESET(shell->status);
         dup2(pipefd[1], STDOUT_FILENO);
         close(pipefd[0]);
         close(pipefd[1]);
         ast(cmd1_node, shell);
         return_value_shell_1 = shell->status;
-        exit(return_value_shell_1);
+        _exit(return_value_shell_1);
     }
     return return_value_shell_1;
 }
 
-int32_t
+__attribute__((deprecated)) int32_t
 pipe_child_normal_process(shell_t *shell, pid_t pid1, int32_t *pipefd, ...)
 {
-    node_t *cmd2_node = DEFAULT(cmd2_node);
     pid_t pid2;
+    node_t *cmd2_node = DEFAULT(cmd2_node);
     int32_t return_value_shell_1 = DEFAULT(return_value_shell_1);
     int32_t return_value_shell_2 = DEFAULT(return_value_shell_2);
 
@@ -78,7 +81,8 @@ pipe_child_normal_process(shell_t *shell, pid_t pid1, int32_t *pipefd, ...)
         close(pipefd[0]); close(pipefd[1]);
         ast(cmd2_node, shell);
         return_value_shell_2 = shell->status;
-        waitpid(pid1, NULL, 0); exit(0);
+        waitpid(pid1, NULL, 0);
+        _exit(0);
         EXIT_W_ECHO_ERROR_("Command not found.", EXIT_FAILURE);
     }
     terminate_pipe(shell, pipefd, pid1, pid2,
@@ -86,7 +90,7 @@ pipe_child_normal_process(shell_t *shell, pid_t pid1, int32_t *pipefd, ...)
     return 0;
 }
 
-int32_t
+__attribute__((deprecated)) int32_t
 pipe_child_with_no_printable_process(shell_t *shell, pid_t pid1,
                                             int32_t *pipefd, ...)
 {
@@ -132,7 +136,7 @@ execute_pipeline(node_t *cmd1_node, node_t *cmd2_node, shell_t *shell)
 
     pipe_child_process(shell, pid1, pipefd, cmd1_node);
     if (pid1 != 0) {
-        shell->status = DEFAULT(shell->status);
+        shell->status = RESET(shell->status);
         dup2(pipefd[0], STDIN_FILENO);
         close(pipefd[0]);
         close(pipefd[1]);
