@@ -1,19 +1,21 @@
 /**
-* {{ project }}
-* Copyright (C) {{ year }}  {{ organization }}
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2023 hugo
+ * 
+ * This file is part of TekSH.
+ * 
+ * TekSH is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * TekSH is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with TekSH.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "shell.h"
 
@@ -29,11 +31,12 @@ char *set_unset_env_ext(int32_t i, char **arg, char **env, char *second_step)
 
 void set_unset_in_env(shell_t *shell, char **env, int32_t len_arg)
 {
-    int32_t i = 0;
-    char *second_step = NULL; char **arg = parse_stdin(shell->get_line, shell);
+    int32_t i = DEFAULT(i);
+    char *second_step = DEFAULT(second_step); char **arg = parse_stdin(shell->get_line, shell);
     char **first_step =
     (char**)malloc_attribut(sizeof(char *) * len_array(env) + 2, shell);
     i = function_set_param_env(i, env, first_step, shell);
+
     for (int32_t index = 0; env[index]; index++) {
         first_step = _str_to_word_array_custom
         (shell, shell->set_env->env_array[index], '=');
@@ -54,7 +57,7 @@ void set_unset_in_env(shell_t *shell, char **env, int32_t len_arg)
 void set_in_env_full(shell_t *shell, char **env,
                 int32_t len_arg, int32_t in_env)
 {
-    int32_t i = 0, fmall = 0;
+    int32_t i = DEFAULT(i), fmall = DEFAULT(fmall);
 
     if (len_arg == 3 && in_env == -3) {
         char *second_step = NULL;
@@ -78,7 +81,7 @@ void set_in_env_full(shell_t *shell, char **env,
 void
 set_in_env_empty(shell_t* shell, char **env, int32_t len_arg, int32_t in_env)
 {
-    int32_t i = 0;
+    int32_t i = DEFAULT(i);
     if (len_arg == 2 && in_env == -3) {
         char **arg = parse_stdin(shell->get_line, shell);
         char **first_step =
