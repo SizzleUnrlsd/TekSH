@@ -196,10 +196,16 @@ You can help by sharing this file in case of a bug.
 
 ## Recently Added/Patched 
 
+1.3.4
 - [ ] Add : job control
 - [ ] fix : multiple-pipe
 - [ ] Fix : Output management outside tty
 - [ ] Improve : Improved update system
+
+1.5.5
+- [ ] Fix : Improved cleaning after each fork
+- [ ] Improve : improved builtin history
+- [ ] Impairment : depreciation of wildcard and builtin history
 
 ## Contributing
 
