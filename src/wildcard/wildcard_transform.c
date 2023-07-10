@@ -42,7 +42,7 @@ wildcard_transform_loop(wildcard_t *wildcard, regex_t *regex,
     return 0;
 }
 
-char *
+__attribute__((deprecated)) char *
 wildcard_transform(wildcard_t *wildcard, char *format)
 {
     regex_t regex;

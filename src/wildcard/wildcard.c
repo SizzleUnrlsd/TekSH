@@ -19,7 +19,7 @@
 
 #include "shell.h"
 
-char *
+__attribute__((deprecated)) char *
 update_wildcard(char *command, shell_t *shell)
 {
     char *new_command = DEFAULT(new_command);
@@ -39,7 +39,7 @@ update_wildcard(char *command, shell_t *shell)
     return new_command;
 }
 
-wildcard_t *
+__attribute__((deprecated)) wildcard_t *
 init_wildcard(char *command)
 {
     wildcard_t *wildcard = malloc(sizeof(wildcard_t));
@@ -62,7 +62,7 @@ init_wildcard(char *command)
     return wildcard;
 }
 
-void
+__attribute__((deprecated)) void
 terminate_wildcard(wildcard_t *wildcard)
 {
     terminate_buffer(wildcard->new_command);
