@@ -31,7 +31,7 @@ cmp_string(char s1, char s2)
 int32_t
 _strcmp(char const *s1, char const *s2)
 {
-    int32_t n = 0;
+    int32_t n = DEFAULT(n);
     int32_t len_s1 = _strlen(s1);
     int32_t len_s2 = _strlen(s2);
 
