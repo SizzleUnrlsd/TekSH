@@ -27,7 +27,7 @@
 #include <stdio.h>
 
 int32_t
-load_and_run_plugin(char *plugin_name, char *function_name, char *command)
+load_and_run_plugin(char *plugin_name, char *function_name, char **command)
 {
     void *handle = DEFAULT(handle);
     char *error = DEFAULT(error);
@@ -49,8 +49,8 @@ load_and_run_plugin(char *plugin_name, char *function_name, char *command)
     plugin = (plugin_t*)(*func)();
     rt_ptr_function = -8888;
 
-    if (strcmp(command, plugin->command) == 0) {
-        rt_ptr_function = plugin->execute();
+    if (strcmp(command[0], plugin->command) == 0) {
+        rt_ptr_function = plugin->execute(len_array(command), command);
     }
 
     dlclose(handle);
@@ -128,7 +128,7 @@ loader(shell_t *shell, char **command)
 
     for (uint32_t i = 0; i < lib_index; i++) {
         path_plugin = concat_str("plugins/add_ons/plugins/", libraries[i]);
-        command_status = load_and_run_plugin(path_plugin, "init", command[0]);
+        command_status = load_and_run_plugin(path_plugin, "init", command);
         if (command_status != -8888)
             break;
         free(libraries[i]);

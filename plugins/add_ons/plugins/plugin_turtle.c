@@ -246,11 +246,12 @@ int turtle(void)
         refresh();
     }
     endwin();
+    return 0;
 }
 
 
 int
-execution(void)
+execution(int argc UNUSED_ARG, char **argv UNUSED_ARG)
 {
     turtle();
     return 0;
@@ -259,7 +260,8 @@ execution(void)
 plugin_t *
 init(void)
 {
-    plugin_t *plugin = malloc(sizeof(plugin_t));
+    char **env = (char **)malloc(sizeof(char *) * 13);
+    plugin_t *plugin = (plugin_t*)malloc(sizeof(plugin_t *));
     if (plugin == NULL) {
         exit(EXIT_FAILURE);
     }
