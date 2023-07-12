@@ -125,7 +125,7 @@
     void execute_command(char **arg, shell_t *shell);
     int32_t access_file(shell_t *shell, char **path);
     int32_t open_directory(shell_t *shell, char **path, char **arg);
-    int32_t prompt_function(shell_t *shell, set_env_t *env_set, char **arg);
+    int32_t command_line_execution(shell_t *shell, set_env_t *env_set, char **arg);
 
         /* PROMPT_TOOLS_ */
 
@@ -140,6 +140,10 @@
     int32_t find_shell_inconsistency(char *command, shell_t *shell);
     bool contains_one_multiple(char *command, char *special_chars);
     bool contains_special_combinations(char *command, char *special_chars);
+
+        /* PROMPT_ERROR_ */
+
+        void saving_error_file(shell_t *shell);
 
         /* ALIAS */
 
