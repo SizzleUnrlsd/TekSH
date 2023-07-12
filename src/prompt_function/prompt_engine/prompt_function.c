@@ -49,7 +49,7 @@ switch_sig(shell_t *shell, int32_t wstatus)
 }
 
 int32_t
-prompt_function(shell_t *shell, set_env_t *env_set, char **arg)
+command_line_execution(shell_t *shell, set_env_t *env_set, char **arg)
 {
     int32_t wstatus = DEFAULT(wstatus);
     pid_t pid = fork();
@@ -69,6 +69,7 @@ prompt_function(shell_t *shell, set_env_t *env_set, char **arg)
         _exit(shell->status);
     }
     if (pid != 0) {
+        current_process = true;
         waitpid(pid, &wstatus, 0);
         switch_sig(shell, wstatus);
         parent_exit(shell, wstatus);

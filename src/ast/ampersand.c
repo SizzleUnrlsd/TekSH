@@ -72,14 +72,23 @@ ampersand(char *input, node_t *node, shell_t *shell)
 
     if (pid == -1) {
         _p_error(_FORK_ERROR);
-        return;
+        exit(_FORK_ERROR);
     } else if (pid == 0) {
+        /* ignores the SIGINT signal */
+        struct sigaction act;
+        act.sa_handler = SIG_IGN;
+        sigemptyset(&act.sa_mask);
+        act.sa_flags = 0;
+        sigaction(SIGINT, &act, NULL);
+
         _buf_output(node, shell);
         _printf("[%d] %d done\t\t\t\t%s", job_control, getpid(), input);
 
         if (supposed_job_control > 0) {
             --supposed_job_control;
+            /* is used to restart the prompt */
             kill(getppid(), SIGINT);
+            _exit(shell->status);
         }
         _exit(shell->status);
     } else {

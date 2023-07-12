@@ -32,6 +32,6 @@ execute_command(char **arg, shell_t *shell)
         exit(0);
     }
     if (SHELL_ENV == 0 && no_command == 0 && BINARY == 0) {
-        prompt_function(shell, shell->set_env, arg);
+        command_line_execution(shell, shell->set_env, arg);
     }
 }

@@ -25,6 +25,8 @@ static volatile sig_atomic_t keep_running = 1;
 
 static bool _tty = false;
 
+bool current_process = false;
+
 char *detail = DEFAULT(detail);
 
 int load_history(const char *filename)
@@ -108,16 +110,22 @@ char *set_promt(void)
 /* Sigint management */
 void inthand(int32_t signum UNUSED_ARG)
 {
-    if (_tty) {
+    char buffer[256] = {0};
+    sprintf(buffer, "%s%s%s", "\x1b[1m", ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET, detail);
+
+
+    if (signum == SIGINT && _tty && current_process == false) {
         /* Handles the case where the prompt buffer is full */
+        rl_free_line_state();
         rl_replace_line("", 0);
+        rl_crlf();
         rl_redisplay();
-        _print("\n");
-        _print(ANSI_BOLD_ON);
-        _print(ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET);
-        _print(detail);
-        fflush(stdout);
+        _printf("%s", buffer);
         rl_cleanup_after_signal();
+    }
+    if (signum == SIGTSTP) {
+        rl_forced_update_display();
+        return;
     }
 }
 
@@ -144,6 +152,8 @@ prompt_shell(shell_t *shell)
     _tty = shell->print;
 
     signal(SIGINT, inthand);
+    signal(SIGTSTP, inthand);
+
     if (first_call) {
         /* The 'rl_initialize()' function must be called once before the first call to readline.
             Otherwise it may cause problems with the display of the prompt.
@@ -162,28 +172,25 @@ prompt_shell(shell_t *shell)
     garbage_collector(detail, shell);
 
     do {
+        char buffer[256] = {0};
+
         if (shell->status == 0 && RD_TTY) {
-            _print(ANSI_BOLD_ON);
-            _print(ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET);
+            sprintf(buffer, "%s%s%s", "\x1b[1m", ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET, detail);
         } else if (shell->status != 0 && RD_TTY) {
-            _print(ANSI_BOLD_ON);
-            _print(ANSI_COLOR_RED "•" ANSI_COLOR_RESET);
+            sprintf(buffer, "%s%s%s", "\x1b[1m", ANSI_COLOR_RED "•" ANSI_COLOR_RESET, detail);
         }
 
         /* Not in the tty*/
         if (!_tty) {
-            read = getline(&line, &len, stdin);
+            if (getline(&line, &len, stdin) == -1) {
+                exit(shell->status);
+            }
         }
-        if (read == -1) {
-            exit(shell->status);
-        }
-
         /* In the tty */
         if (_tty) {
-            line = readline(detail);
-        }
-        if (!line) {
-            return 42;
+            if (line = readline(buffer), !line) {
+                return 42;
+            }
         }
 
         garbage_collector(line, shell);
