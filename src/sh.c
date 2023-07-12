@@ -20,13 +20,13 @@
 #include "shell.h"
 
 #ifndef DEBUG
-    sigjmp_buf env_stack;
+sigjmp_buf env_stack;
 
-    _VOID void catch_segv(int32_t sig)
-    {
-        pfflush_wrapper(STDERR_FILENO, "SEGFAULT[%d]\n", sig);
-        siglongjmp(env_stack, 1);
-    }
+_VOID void catch_segv(int32_t sig)
+{
+    pfflush_wrapper(STDERR_FILENO, "SEGFAULT[%d]\n", sig);
+    siglongjmp(env_stack, 1);
+}
 #endif
 
 shell_conf_t globalConfig;
@@ -36,6 +36,7 @@ void shell_engine(shell_t *shell, char **env)
     char *new_line = DEFAULT(new_line);
     call_alias_t *call_alias = DEFAULT(call_alias);
     shell_requirement(shell, env, &call_alias);
+
 
     while (true) {
         if (prompt_shell(shell) == 42) {
@@ -54,11 +55,7 @@ void shell_engine(shell_t *shell, char **env)
         if (sigsetjmp(env_stack, 1) == 0) {
             ast_final(shell->get_line, shell);
         } else {
-            FILE* file = fopen("mini_dump/error_promt_cmd", "a");
-            char log[256] = {0};
-            sprintf(log, "%s/%s", shell->get_line, ARCH);
-            fprintf(file, "%s\n", log);
-            fclose(file);
+            saving_error_file(shell);
         }
 #else
         ast_final(shell->get_line, shell);
