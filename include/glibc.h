@@ -38,7 +38,9 @@
     #include <ctype.h>
     #include <ctype.h>
     #include <pthread.h>
+#ifndef DEBUG
     #include <setjmp.h>
+#endif
     #include <readline/readline.h>
     #include <regex.h>
     #include <readline/readline.h>
