@@ -28,9 +28,9 @@
     #include "garbage_collector.h"
     #include "bucket.h"
     #include "alias.h"
+    #include "plugin.h"
     #include "wildcard.h"
     #include "set_unset.h"
-    #include "plugin.h"
 
 #ifdef __x86_64__
     #define ARCH "_x86_64"
@@ -56,6 +56,12 @@
     #define JOB_CONTROL_
     extern uint32_t job_control;
     extern uint32_t supposed_job_control;
+
+#endif
+
+#ifndef CURRENT_PROCESS_
+    #define CURRENT_PROCESS_
+    extern bool current_process;
 
 #endif
 

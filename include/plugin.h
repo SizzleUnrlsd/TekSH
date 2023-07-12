@@ -20,8 +20,8 @@
 #ifndef PLUGIN_H_
     #define PLUGIN_H_
 
-    typedef struct {
-        int (*execute)(void);
+    typedef struct plugin_s {
+        int (*execute)(int, char **);
         char *command;
     } plugin_t;
 
