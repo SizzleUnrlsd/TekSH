@@ -1,5 +1,5 @@
 # TekSH
-Version 1.5.5
+Version 1.7.8
 <img src="https://t.bkit.co/w_64925db39b56d.gif" />
 -----------------
 
@@ -35,7 +35,7 @@ cd Teksh && make
    ██║   ██╔══╝  ██╔═██╗ ╚════██║██╔══██║
    ██║   ███████╗██║  ██╗███████║██║  ██║
    ╚═╝   ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-1.5.5
+1.7.8
 
 ```
 
@@ -206,6 +206,13 @@ You can help by sharing this file in case of a bug.
 - [ ] Fix : Improved cleaning after each fork
 - [ ] Improve : improved builtin history
 - [ ] Impairment : depreciation of wildcard and builtin history
+
+1.7.8
+- [ ] Fix : SIGINT signal with prompt management
+- [ ] Feat : C++ code available in plugins
+- [ ] Feat : control management + Z (not yet finished)
+- [ ] Improve : improve plugins by adding command line arguments
+- [ ] Refactor : exclusion of certain libraries when they are not needed
 
 ## Contributing
 
