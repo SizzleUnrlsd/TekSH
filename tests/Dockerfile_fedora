@@ -1,4 +1,4 @@
-FROM tmgd/fedora_gcc_make_readline:v1.0.0
+FROM tmgd/fedora_gcc_make_readline:v1.1.0
 
 WORKDIR /app
 
