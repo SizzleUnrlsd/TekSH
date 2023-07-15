@@ -33,67 +33,88 @@ _buf_output(node_t *node, shell_t *shell)
     }
 
     pid = fork();
-    if (pid == -1) {
-        _p_error(_FORK_ERROR);
-        return;
-    } else if (pid == 0) {
-        close(pipefd[0]);
-        dup2(pipefd[1], STDOUT_FILENO);
-        close(pipefd[1]);
-
-        ast(node, shell);
-        _exit(EXIT_SUCCESS);
-    } else {
-        close(pipefd[1]);
-        bytesRead = read(pipefd[0], buffer, 1096 - 1);
-        if (bytesRead == -1) {
-            _p_error(_READ_ERROR);
-            exit(_READ_ERROR);
+    switch (pid) {
+        case -1:
+        {
+            _p_error(_FORK_ERROR);
+            return;
+            break;
         }
-        buffer[bytesRead] = '\0';
+        case 0:
+        {
+            close(pipefd[0]);
+            dup2(pipefd[1], STDOUT_FILENO);
+            close(pipefd[1]);
 
-        _printf("\n%s", buffer);
-        if (bytesRead != 0 && buffer[_strlen(buffer) - 1] != '\n') {
-            _print("\n");
+            ast(node, shell);
+            _exit(EXIT_SUCCESS);
+            break;
         }
-        close(pipefd[0]);
-        waitpid(pid, &wstatus, WNOHANG);
+        default:
+        {
+            close(pipefd[1]);
+            bytesRead = read(pipefd[0], buffer, 1096 - 1);
+            if (bytesRead == -1) {
+                _p_error(_READ_ERROR);
+                exit(_READ_ERROR);
+            }
+            buffer[bytesRead] = '\0';
+
+            _printf("\n%s", buffer);
+            if (bytesRead != 0 && buffer[_strlen(buffer) - 1] != '\n') {
+                _print("\n");
+            }
+            close(pipefd[0]);
+            waitpid(pid, &wstatus, WNOHANG);
+            break;
+        }
     }
 }
 
 void
-ampersand(char *input, node_t *node, shell_t *shell)
+ampersand(char *input UNUSED_ARG, node_t *node UNUSED_ARG, shell_t *shell UNUSED_ARG)
 {
     pid_t pid;
     int32_t wstatus = DEFAULT(wstatus);
 
     ++job_control;
+
     pid = fork();
-
-    if (pid == -1) {
-        _p_error(_FORK_ERROR);
-        exit(_FORK_ERROR);
-    } else if (pid == 0) {
-        /* ignores the SIGINT signal */
-        struct sigaction act;
-        act.sa_handler = SIG_IGN;
-        sigemptyset(&act.sa_mask);
-        act.sa_flags = 0;
-        sigaction(SIGINT, &act, NULL);
-
-        _buf_output(node, shell);
-        _printf("[%d] %d done\t\t\t\t%s", job_control, getpid(), input);
-
-        if (supposed_job_control > 0) {
-            --supposed_job_control;
-            /* is used to restart the prompt */
-            kill(getppid(), SIGINT);
-            _exit(shell->status);
+    switch (pid) {
+        case -1:
+        {
+            _p_error(_FORK_ERROR);
+            exit(_FORK_ERROR);
+            break;
         }
-        _exit(shell->status);
-    } else {
-        _printf("[%d] %d\n", job_control, pid);
-        waitpid(pid, &wstatus, WNOHANG);
+        case 0:
+        {
+            /* ignores the SIGINT signal */
+            struct sigaction act;
+            act.sa_handler = SIG_IGN;
+            sigemptyset(&act.sa_mask);
+            act.sa_flags = 0;
+            sigaction(SIGINT, &act, NULL);
+
+            _buf_output(node, shell);
+            _printf("[%d] %d done\t\t\t\t%s", job_control, getpid(), input);
+
+            if (supposed_job_control > 0) {
+                --supposed_job_control;
+                /* is used to restart the prompt */
+                kill(getppid(), SIGINT);
+                _exit(shell->status);
+            }
+            _exit(shell->status);
+            break;
+        }
+        default:
+        {
+            _printf("[%d] %d\n", job_control, pid);
+            waitpid(pid, &wstatus, WNOHANG);
+            break;
+        }
     }
+
     return;
 }
