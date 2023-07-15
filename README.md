@@ -214,6 +214,12 @@ You can help by sharing this file in case of a bug.
 - [ ] Improve : improve plugins by adding command line arguments
 - [ ] Refactor : exclusion of certain libraries when they are not needed
 
+1.80.9
+- [ ] Feat : autocomplete improvement, with git, docker (not finished), make
+- [ ] Feat : control management + Z (not yet finished)
+- [ ] Style
+
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
