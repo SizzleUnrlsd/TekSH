@@ -216,7 +216,6 @@ You can help by sharing this file in case of a bug.
 
 1.80.9
 - [ ] Feat : autocomplete improvement, with git, docker (not finished), make
-- [ ] Feat : control management + Z (not yet finished)
 - [ ] Style
 
 
