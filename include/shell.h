@@ -32,6 +32,10 @@
     #include "wildcard.h"
     #include "set_unset.h"
 
+    char **command_completion(const char *text, int start, int end);
+    void my_completion_display_matches(char **matches, int num_matches, int max_length);
+
+
 #ifdef __x86_64__
     #define ARCH "_x86_64"
 #elif __i386__
@@ -62,6 +66,12 @@
 #ifndef CURRENT_PROCESS_
     #define CURRENT_PROCESS_
     extern bool current_process;
+
+#endif
+
+#ifndef BUFFER_PROMPT_
+    #define BUFFER_PROMPT_
+    extern char _gbuf[256];
 
 #endif
 
