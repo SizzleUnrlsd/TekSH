@@ -29,6 +29,8 @@ bool current_process = false;
 
 char *detail = DEFAULT(detail);
 
+char _gbuf[256] = {0};
+
 int load_history(const char *filename)
 {
     return read_history(filename);
@@ -37,13 +39,6 @@ int load_history(const char *filename)
 int save_history(const char *filename)
 {
     return write_history(filename);
-}
-
-char **command_completion(const char *text, int start, int end)
-{
-    (void) start;
-    (void) end;
-    return rl_completion_matches(text, rl_filename_completion_function);
 }
 
 char *
@@ -110,8 +105,8 @@ char *set_promt(void)
 /* Sigint management */
 void inthand(int32_t signum UNUSED_ARG)
 {
-    char buffer[256] = {0};
-    sprintf(buffer, "%s%s%s", "\x1b[1m", ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET, detail);
+    char _buf[256] = {0};
+    sprintf(_buf, "%s%s%s", "\x1b[1m", ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET, detail);
 
 
     if (signum == SIGINT && _tty && current_process == false) {
@@ -120,7 +115,7 @@ void inthand(int32_t signum UNUSED_ARG)
         rl_replace_line("", 0);
         rl_crlf();
         rl_redisplay();
-        _printf("%s", buffer);
+        _printf("%s", _buf);
         rl_cleanup_after_signal();
     }
     if (signum == SIGTSTP) {
@@ -172,12 +167,10 @@ prompt_shell(shell_t *shell)
     garbage_collector(detail, shell);
 
     do {
-        char buffer[256] = {0};
-
         if (shell->status == 0 && RD_TTY) {
-            sprintf(buffer, "%s%s%s", "\x1b[1m", ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET, detail);
+            sprintf(_gbuf, "%s%s%s", "\x1b[1m", ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET, detail);
         } else if (shell->status != 0 && RD_TTY) {
-            sprintf(buffer, "%s%s%s", "\x1b[1m", ANSI_COLOR_RED "•" ANSI_COLOR_RESET, detail);
+            sprintf(_gbuf, "%s%s%s", "\x1b[1m", ANSI_COLOR_RED "•" ANSI_COLOR_RESET, detail);
         }
 
         /* Not in the tty*/
@@ -188,7 +181,8 @@ prompt_shell(shell_t *shell)
         }
         /* In the tty */
         if (_tty) {
-            if (line = readline(buffer), !line) {
+            rl_completion_display_matches_hook = my_completion_display_matches;
+            if (line = readline(_gbuf), !line) {
                 return 42;
             }
         }
