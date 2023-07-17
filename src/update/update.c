@@ -161,12 +161,12 @@ check_version(void)
     readme = get_readme_from_github("SizzleUnrlsd", "TekSH");
 
     if (!readme){
-        _p_error(_BUF_ERROR);
+        return;
     }
  
     version = find_version(readme);
     if (!version) {
-        _p_error(_CONST_BUF_ERROR);
+        return;
     }
     if (check_current_version(version)) {
         update_services();
