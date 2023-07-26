@@ -52,7 +52,11 @@ ast(node_t *node, shell_t *shell)
             ast(node->right, shell);
             break;
         case NODE_BACK:
-            ampersand(node_to_string(node->left), node->left, shell);
+            ampersand(node->left, shell);
+            ast(node->right, shell);
+            break;
+        case NODE_SUBSHELL:
+            ast(node->left, shell);
             ast(node->right, shell);
             break;
         case NODE_ARGUMENT:
