@@ -80,32 +80,39 @@ char **current_list;
 
 bool printable = false;
 
-int is_directory(const char *filename) {
+static inline int
+is_directory(const char *filename)
+{
     struct stat path_stat;
+
     if (stat(filename, &path_stat) == 0) {
         return S_ISDIR(path_stat.st_mode);
     }
     return 0;
 }
 
-int is_executable(const char *filename) {
+static inline int
+is_executable(const char *filename)
+{
     struct stat path_stat;
+
     if (stat(filename, &path_stat) == 0) {
         return !S_ISDIR(path_stat.st_mode) && ((path_stat.st_mode & S_IXUSR) || (path_stat.st_mode & S_IXGRP) || (path_stat.st_mode & S_IXOTH));
     }
     return 0;
 }
 
-int format_output(char **str, int len_array)
+int
+format_output(char **str, int len_array)
 {
     int num_files = len_array;
-    int win_width = 0;
-    int largest_str = 0;
-    int num_columns = 0;
-    int num_rows = 0;
-    char *filename = NULL;
-    char *color_code = NULL;
-    int len_prompt = 0;
+    int win_width = DEFAULT(win_width);
+    int largest_str = DEFAULT(largest_str);
+    int num_columns = DEFAULT(num_columns);
+    int num_rows = DEFAULT(num_rows);
+    char *filename = DEFAULT(filename);
+    char *color_code = DEFAULT(color_code);
+    int len_prompt = DEFAULT(len_prompt);
 
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
@@ -114,7 +121,7 @@ int format_output(char **str, int len_array)
     if (strcmp("UNDEFINE", getgit_branch()) == 0) {
         len_prompt = rl_point;
     } else {
-        len_prompt = rl_point + (_strlen(getgit_branch()) * 8);
+        len_prompt = (_strlen(getgit_branch()) * 5);
     }
 
     largest_str = 0;
@@ -155,10 +162,11 @@ int format_output(char **str, int len_array)
     return 0;
 }
 
-char *completion_generator(const char *text, int state)
+char *
+completion_generator(const char *text, int state)
 {
-    static int list_index, len;
-    char *name;
+    static int list_index = DEFAULT(list_index), len = DEFAULT(len);
+    char *name = DEFAULT(name);
 
     if (!state) {
         list_index = 0;
@@ -173,10 +181,11 @@ char *completion_generator(const char *text, int state)
     return NULL;
 }
 
-char **command_completion(const char *text, int start, int end UNUSED_ARG)
+char **
+command_completion(const char *text, int start, int end UNUSED_ARG)
 {
-    char **matches = NULL;
-    char *first_space = NULL;
+    char **matches = DEFAULT(matches);
+    char *first_space = DEFAULT(first_space);
 
     if (text[0] == '\0' && end == 0) {
         return NULL;
@@ -230,15 +239,33 @@ char **command_completion(const char *text, int start, int end UNUSED_ARG)
     return matches;
 }
 
-void my_completion_display_matches(char **matches, int num_matches UNUSED_ARG, int max_length UNUSED_ARG)
+void
+my_completion_display_matches(char **matches,
+                            int num_matches UNUSED_ARG,
+                            int max_length UNUSED_ARG)
 {
-    static int a = 0;
-    int len_array_var = 0;
-    static char *first_comp = NULL;
-    static char *last_comp = NULL;
+    static int a = DEFAULT(a);
+    static uint64_t temp = DEFAULT(temp);
+    int len_array_var = DEFAULT(len_array_var);
+    static char *first_comp = DEFAULT(first_comp);
+    static char *last_comp = DEFAULT(last_comp);
+
+    if (temp != count_readline) {
+        first_comp = NULL;
+        last_comp = NULL;
+        temp = count_readline;
+    }
 
     if (rl_line_buffer[0] == '\0') {
         return;
+    }
+
+    if (first_comp != NULL && rl_line_buffer != NULL && strcmp(first_comp, rl_line_buffer) == 0) {
+        return;
+    } else {
+        first_comp = NULL;
+        last_comp = NULL;
+        a = 0;
     }
 
     if (( a%2 ) == 0 && first_comp == NULL && last_comp == NULL) {
@@ -252,18 +279,11 @@ void my_completion_display_matches(char **matches, int num_matches UNUSED_ARG, i
         ++a;
     }
 
-    if (strcmp(first_comp, rl_line_buffer) == 0) {
-        return;
-    } else {
-        first_comp = NULL;
-        last_comp = NULL;
-        a = 0;
-    }
     
 looser:
 
     rl_attempted_completion_function = command_completion;
-    for (int i = 0; matches[i]; i++) {
+    for (int32_t i = 0; matches[i]; i++) {
         len_array_var++;
     }
 
