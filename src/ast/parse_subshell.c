@@ -20,17 +20,20 @@
 #include "shell.h"
 
 node_t *
-parse_argument(char **input, shell_t *shell)
+parse_parentheses(char **input, shell_t *shell)
 {
-    char *value = DEFAULT(value);
-    char *start = *input;
+    node_t *right = DEFAULT(right);
+    node_t *left = parse_argument(input, shell);
 
-    while (**input != '\0' && **input != '|'
-        && **input != ';' && **input != '>'
-        && **input != '<' && **input != '&'
-        && **input != '(' && **input != ')') {
+    if (**input == '(') {
+        (*input)++;
+        left = parse_semicolon(input, shell);
+        if (**input == ')') {
             (*input)++;
+            right = parse_parentheses(input, shell);
+            return create_node(NODE_SUBSHELL, NULL, left, right, shell);
+        }
     }
-    value = _strndup(start, *input - start);
-    return create_node(NODE_ARGUMENT, value, NULL, NULL, shell);
+
+    return left;
 }

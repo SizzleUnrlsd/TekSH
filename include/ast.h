@@ -31,6 +31,7 @@
         NODE_AND = 7,
         NODE_OR = 8,
         NODE_BACK = 9,
+        NODE_SUBSHELL = 10,
     } nodetype;
 
     typedef struct node_s {
@@ -48,13 +49,16 @@
     node_t *parse_semicolon(char **input, shell_t *shell);
     node_t *parse_and_or(char **input, shell_t *shell);
     node_t *parse_job_control(char **input, shell_t *shell);
+    node_t *parse_heredoc(char **input, shell_t *shell);
+    node_t *parse_parentheses(char **input, shell_t *shell);
     int32_t execute_pipeline(node_t *cmd1_node, node_t *cmd2_node,
     shell_t *shell);
-    void ampersand(char *input, node_t *node, shell_t *shell);
+    void ampersand(node_t *node, shell_t *shell);
     void redirection_append(node_t *node, shell_t *shell);
     void redirection_dup_in(node_t *node, shell_t *shell);
     char *node_to_string(node_t *node);
     void ast(node_t *node, shell_t *shell);
+    void ast_printable(node_t *node, shell_t *shell);
     int32_t ast_final(char *command, shell_t *shell);
     void save_descriptor(int32_t *save_0, int32_t *save_1, bool tty);
     void descriptor_restoration(int32_t save_0, int32_t save_1, bool tty);

@@ -72,7 +72,7 @@ _buf_output(node_t *node, shell_t *shell)
 }
 
 void
-ampersand(char *input UNUSED_ARG, node_t *node UNUSED_ARG, shell_t *shell UNUSED_ARG)
+ampersand(node_t *node, shell_t *shell)
 {
     pid_t pid;
     int32_t wstatus = DEFAULT(wstatus);
@@ -97,7 +97,8 @@ ampersand(char *input UNUSED_ARG, node_t *node UNUSED_ARG, shell_t *shell UNUSED
             sigaction(SIGINT, &act, NULL);
 
             _buf_output(node, shell);
-            _printf("[%d] %d done\t\t\t\t%s", job_control, getpid(), input);
+            _printf("[%d] %d done\t\t\t\t", job_control, getpid());
+            _print("\n");
 
             if (supposed_job_control > 0) {
                 --supposed_job_control;

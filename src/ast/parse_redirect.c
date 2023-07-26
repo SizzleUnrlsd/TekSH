@@ -19,23 +19,11 @@
 
 #include "shell.h"
 
-void
-parse_redirect_extend(char **input, nodetype *type)
-{
-    if (**input == '>') {
-        *type = NODE_REDIRECT_APPEND;
-        (*input)++;
-    } else {
-        *type = NODE_REDIRECT_OUT;
-    }
-    return;
-}
-
 node_t *
 parse_heredoc(char **input, shell_t *shell)
 {
     node_t *right = DEFAULT(right);
-    node_t *left = parse_argument(input, shell);
+    node_t *left = parse_parentheses(input, shell);
     nodetype type;
 
     if (**input == '<' && *(*input + 1) == '<') {
@@ -59,7 +47,12 @@ parse_redirect(char **input, shell_t *shell)
     nodetype type;
     if (**input == '>') {
         (*input)++;
-        parse_redirect_extend(input, &type);
+        if (**input == '>') {
+            type = NODE_REDIRECT_APPEND;
+            (*input)++;
+        } else {
+            type = NODE_REDIRECT_OUT;
+        }
         right = parse_redirect(input, shell);
         return create_node(type, NULL, left, right, shell);
     } else if (**input == '<' && *(*input + 1) != '<') {
