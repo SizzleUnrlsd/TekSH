@@ -30,17 +30,19 @@ execute_command_with_redirection(shell_t *shell,
     }
 
     pid = fork();
-    if (pid == -1) {
+    switch (pid)
+    {
+    case -1:
         _p_error(_FORK_ERROR);
-    }
-
-    if (pid == 0) {
+        _exit(_FORK_ERROR);
+        break;
+    case 0:
         close(pipefd[1]);
         dup2(pipefd[0], STDIN_FILENO);
         close(pipefd[0]);
         ast(node->left, shell);
         _exit(0);
-    } else {
+    default:
         close(pipefd[0]);
         if (write(pipefd[1], input, strlen(input)) == -1) {
             _p_error(_WRITE_ERROR);
@@ -64,7 +66,6 @@ redirection_dup_in_extend(shell_t *shell, char *file, char *cmd, ...)
     file = remove_space_before_string(file);
     garbage_collector(file, shell);
     del_space_end_str(file);
-
 
     arg = va_arg(ap, char **);
     parse_command(cmd, arg);
@@ -93,7 +94,7 @@ redirection_dup_in(node_t *node, shell_t *shell)
     redirection_dup_in_extend(shell, file, cmd, arg, end_keyword, input);
 
     while (1) {
-        print_str("?", ' ', RD_TTY, 1);
+        print_str("?", ' ', RD_TTY, 2);
         read = getline(&line, &len, stdin);
         if (read == -1)
             break;

@@ -19,79 +19,109 @@
 
 #include "shell.h"
 
-void
-redirection_append_extend(node_t *node, ...)
+static void
+_buf_output(node_t *node, shell_t *shell, const char *filename UNUSED_ARG, char *modes UNUSED_ARG)
 {
-    shell_t *shell = DEFAULT(shell);
-    int32_t fd = DEFAULT(fd);
-    char **args = DEFAULT(args);
+    int32_t pipefd[2] = {0};
+    char buffer[8192] = {0};
+    int32_t wstatus = DEFAULT(wstatus);
+    pid_t pid = DEFAULT(pid);
+    ssize_t bytesRead = DEFAULT(bytesRead);
+    FILE* file;
 
-    va_list ap;
-    va_start(ap, node);
-
-    shell = va_arg(ap, shell_t*);
-    fd = va_arg(ap, int);
-    args = va_arg(ap, char **);
-
-    if (node->type == NODE_REDIRECT_IN) {
-        dup2(fd, STDIN_FILENO);
-    } else {
-        dup2(fd, STDOUT_FILENO);
+    if (pipe(pipefd) == -1) {
+        exit(EXIT_FAILURE);
     }
-    close(fd);
-    execute_command(args, shell);
-    _exit(0);
-    va_end(ap);
-    return;
+
+    pid = fork();
+    switch (pid) {
+        case -1:
+        {
+            _p_error(_FORK_ERROR);
+            return;
+            break;
+        }
+        case 0:
+        {
+            close(pipefd[0]);
+            dup2(pipefd[1], STDOUT_FILENO);
+            close(pipefd[1]);
+
+            ast(node->left, shell);
+            fflush(stdout);
+
+            _exit(EXIT_SUCCESS);
+            break;
+        }
+        default:
+        {
+            close(pipefd[1]);
+            file = fopen(filename, modes);
+            if (file == NULL) {
+                return;
+            }
+            while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer))) > 0) {
+                fwrite(buffer, sizeof(char), bytesRead, file);
+            }
+
+            fclose(file);
+            close(pipefd[0]);
+            waitpid(pid, NULL, 0);
+            break;
+        }
+    }
 }
 
-void
-redirection_append_extend_extend(node_t *node, char *file, int32_t *fd)
+void _buf_input(node_t *node UNUSED_ARG, shell_t *shell UNUSED_ARG, const char *file)
 {
-    if (node->type == NODE_REDIRECT_OUT) {
-        *fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    } else if (node->type == NODE_REDIRECT_APPEND) {
-        *fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-    } else {
-        *fd = open(file, O_RDONLY);
+    int old_stdin = DEFAULT(old_stdin);
+    FILE *input_file = fopen(file, "r");
+    if (!input_file) {
+        return;
     }
-    if (*fd < 0) {
-        _exit(0);
+
+    old_stdin = dup(STDIN_FILENO);
+
+    if (dup2(fileno(input_file), STDIN_FILENO) == -1) {
+        fclose(input_file);
+        return;
     }
-    return;
+
+    ast(node->left, shell);
+    dup2(old_stdin, STDIN_FILENO);
+
+    fclose(input_file);
 }
 
 void
 redirection_append(node_t *node, shell_t *shell)
 {
-    int32_t status = DEFAULT(status);
-    int32_t fd = DEFAULT(fd);
-    char *args[128] = {0};
-    char *cmd = DEFAULT(cmd);
-    char *file = DEFAULT(file);
+    char *file = node_to_string(node->right) + 1;
+    
+    if (overlap_p(file, node_to_string(node->right), strlen(file), strlen(node_to_string(node->right))))
+        _p_error(_OVERLAPPING_ERROR);
 
-    pid_t pid = fork();
-    if (pid < 0) {
-        return;
+
+    if (file[_strlen(file) - 1] == ' ') {
+        file[_strlen(file) - 1] = '\0';
     }
-    if (pid == 0) {
-        cmd = node_to_string(node->left);
-        file = node_to_string(node->right);
-        garbage_collector(cmd, shell); garbage_collector(file, shell);
-        if (cmd == NULL) {
-            ast(node->left, shell);
-        }
-        file = remove_space_before_string(file);
-        if (!file) {
-            return;
-        }
-        del_space_end_str(file);
-        parse_command(cmd, args);
-        redirection_append_extend_extend(node, file, &fd);
-        redirection_append_extend(node, shell, fd, args);
-    } else {
-        status = 0;
-        waitpid(pid, &status, 0);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-enum"
+    switch (node->type)
+    {
+    case NODE_REDIRECT_OUT:
+        _buf_output(node, shell, file, "w");
+        break;
+    case NODE_REDIRECT_APPEND:
+        _buf_output(node, shell, file, "a");
+        break;
+    case NODE_REDIRECT_IN:
+        _buf_input(node, shell, file);
+        break;
+    default:
+        break;
     }
+#pragma GCC diagnostic pop
     return;
 }
