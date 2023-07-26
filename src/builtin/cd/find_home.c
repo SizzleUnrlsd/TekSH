@@ -39,6 +39,17 @@ _strdup_bool(char const *src,  shell_t *shell, bool stat)
     return (dest);
 }
 
+static char *
+second_chance(shell_t *shell)
+{
+    struct passwd *pw = getpwuid(getuid());
+    if (pw != NULL && pw->pw_dir != NULL) {
+        return _strdup_bool(pw->pw_dir, shell, true);
+    } else {
+        return NULL;
+    }
+}
+
 char *
 find_home(shell_t *shell, char *home)
 {
@@ -52,5 +63,5 @@ find_home(shell_t *shell, char *home)
             return home;
         }
     }
-    return NULL;
+    return second_chance(shell);
 }
