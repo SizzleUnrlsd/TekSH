@@ -32,7 +32,7 @@
     int32_t char_isdigit(char c);
     int32_t char_isspace(char c);
     int32_t char_isalnum(char c);
-    int32_t _strlen(char const *str);
+    int32_t _strlen(char const *str) __attribute_pure__ __nonnull ((1));
     int32_t stat_copy(char const *str);
     int32_t _get_nbr(char const *str);
     char _putchar(char c, int32_t fd);
@@ -79,6 +79,8 @@
 
         /* BULTIN_H_ */
 
+    int32_t clear_term(shell_t *shell);
+    int32_t clear_wrapper(int start, int end);
     int32_t _echo(shell_t *shell);
     int32_t builtin_cd(shell_t *shell);
     int32_t builtin_env(shell_t *shell);
@@ -112,6 +114,8 @@
 
         /* PROMPT_ */
 
+    char *get_dir(void);
+    char *get_home(void);
     int32_t is_bin(char const *path);
     int32_t is_dir(char const *path);
     int32_t prompt_shell(shell_t *shell);
@@ -126,6 +130,9 @@
     int32_t access_file(shell_t *shell, char **path);
     int32_t open_directory(shell_t *shell, char **path, char **arg);
     int32_t command_line_execution(shell_t *shell, set_env_t *env_set, char **arg);
+    char **command_completion(const char *text, int start, int end);
+    void my_completion_display_matches(char **matches, int num_matches, int max_length);
+
 
         /* PROMPT_TOOLS_ */
 
@@ -180,5 +187,9 @@
         /* PARSE_ARG */
 
     void parse_arg(int32_t ac, char **av);
+
+        /* MEMORY_TOOLS */
+
+    bool overlap_p(void * a, void * b, size_t size_a, size_t size_b);
 
 #endif /* !BASIC_FUNCTION_H_ */
