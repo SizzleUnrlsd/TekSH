@@ -31,6 +31,7 @@ bultin_list_t builtin_list[] = {
     {"history", &builtin_history},
     {"unsetenv", &builtin_unsetenv},
     {"alias", &alias_engine},
+    {"clear", &clear_term},
     {0, NULL},
 };
 
@@ -50,6 +51,7 @@ builtin(shell_t *shell, char **path, uint32_t *no_command)
     for (int32_t i = 0; builtin_list[i].index; i++) {
         if (_strcmp(path[0], builtin_list[i].index) == 0) {
             builtin_list[i].function(shell);
+            break;
         }
     }
     return 0;
