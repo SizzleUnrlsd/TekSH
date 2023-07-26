@@ -37,12 +37,11 @@ void shell_engine(shell_t *shell, char **env)
     call_alias_t *call_alias = DEFAULT(call_alias);
     shell_requirement(shell, env, &call_alias);
 
-
     while (true) {
         if (prompt_shell(shell) == 42) {
             ENDING_PROCESS_("exit", 0);
         }
-        if (format_getline(shell, &shell->get_line)) {
+        if (char_stream_formatting(shell, &shell->get_line)) {
             continue;
         }
         new_line = format_alias_getline(shell, shell->get_line);
@@ -69,7 +68,7 @@ shell_theme()
     // work in progress
 }
 
-int main(int32_t ac UNUSED_ARG, char **av, char **env)
+int main(int32_t ac UNUSED_ARG, char **av, char **env UNUSED_ARG)
 {
     shell_t *shell = DEFAULT(shell);
 
