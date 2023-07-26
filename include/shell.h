@@ -32,10 +32,6 @@
     #include "wildcard.h"
     #include "set_unset.h"
 
-    char **command_completion(const char *text, int start, int end);
-    void my_completion_display_matches(char **matches, int num_matches, int max_length);
-
-
 #ifdef __x86_64__
     #define ARCH "_x86_64"
 #elif __i386__
@@ -49,11 +45,8 @@
 #endif
 
 #define UNUSED_ARG __attribute__((unused))
-
 #define START_FIRST __attribute__((constructor(1000)))
-
 #define _VOID __attribute__((noreturn))
-
 #define _wur __attribute__((__warn_unused_result__))
 
 #ifndef JOB_CONTROL_
@@ -69,9 +62,16 @@
 
 #endif
 
-#ifndef BUFFER_PROMPT_
-    #define BUFFER_PROMPT_
+#ifndef GLOBAL_PROMPT_
+    #define GLOBAL_PROMPT_
     extern char _gbuf[256];
+    extern uint64_t count_readline;
+
+#endif
+
+#ifndef GLOBAL_STRUCT_SHELL_
+    #define GLOBAL_STRUCT_SHELL_
+    extern shell_t *_gshell;    
 
 #endif
 
@@ -139,6 +139,7 @@
         _MEM_ALLOCA_ERROR = 7,
         _THREAD_ALLOCA_ERROR = 8,
         _PIPE_ERROR = 9,
+        _OVERLAPPING_ERROR = 10,
     };
 
 #endif
@@ -200,6 +201,9 @@
                     break;                              \
                 case _PIPE_ERROR:                       \
                     _str = "Pipe Error";                \
+                    break;                              \
+                case _OVERLAPPING_ERROR:                \
+                    _str = "Overlapping Error";         \
                     break;                              \
                 default:                                \
                     _str = "Unknown Error";             \
