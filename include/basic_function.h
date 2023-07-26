@@ -125,7 +125,7 @@
     void parent_exit(shell_t *shell, int32_t wstatus);
     char **parse_stdin(char *command, shell_t *shell);
     char **cut_path_env(shell_t *shell, char **array);
-    bool format_getline(shell_t *shell, char **command);
+    bool char_stream_formatting(shell_t *shell, char **command);
     void execute_command(char **arg, shell_t *shell);
     int32_t access_file(shell_t *shell, char **path);
     int32_t open_directory(shell_t *shell, char **path, char **arg);

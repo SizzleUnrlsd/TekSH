@@ -20,16 +20,14 @@
 #include "shell.h"
 
 volatile sig_atomic_t interrupt_flag = DEFAULT(interrupt_flag);
-
 static volatile sig_atomic_t keep_running = 1;
-
 static bool _tty = false;
-
 bool current_process = false;
-
 char *detail = DEFAULT(detail);
-
 char _gbuf[256] = {0};
+shell_t *_gshell;
+
+uint64_t count_readline;
 
 int load_history(const char *filename)
 {
@@ -41,20 +39,8 @@ int save_history(const char *filename)
     return write_history(filename);
 }
 
-char *
-get_dir(void)
-{
-    char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL) {
-        return strdup(cwd);
-    } else {
-        return "UNDEFINE";
-    }
-
-    return 0;
-}
-
-static char *concat_str(const char *str1, const char *str2, ...)
+static char *
+concat_str(const char *str1, const char *str2, ...)
 {
     va_list args;
     size_t len1 = strlen(str1);
@@ -90,11 +76,11 @@ char *set_promt(void)
     char prompt[512] = {0};
     char *_detail = DEFAULT(_detail);
     char *reset = "\033[0m";
-    char start = '{';
-    char end = '}';
+    char start = '[';
+    char end = ']';
 
     if (strcmp("UNDEFINE", getgit_branch()) != 0)
-        sprintf(prompt, "\033[1;34m%c \033[1;31m%s\033[0m \033[1;34m%c %s", start, getgit_branch(), end, reset);
+        sprintf(prompt, "\033[0;34m%c\033[1;31m%s\033[0m\033[0;34m%c %s", start, getgit_branch(), end, reset);
     else
         sprintf(prompt, " ");
 
@@ -108,9 +94,9 @@ void inthand(int32_t signum UNUSED_ARG)
     char _buf[256] = {0};
     sprintf(_buf, "%s%s%s", "\x1b[1m", ANSI_COLOR_BLUE "•" ANSI_COLOR_RESET, detail);
 
-
     if (signum == SIGINT && _tty && current_process == false) {
         /* Handles the case where the prompt buffer is full */
+        count_readline++;
         rl_free_line_state();
         rl_replace_line("", 0);
         rl_crlf();
@@ -145,6 +131,7 @@ prompt_shell(shell_t *shell)
     tcsetattr(STDIN_FILENO, TCSANOW, &new_termios);
 
     _tty = shell->print;
+    _gshell = shell;
 
     signal(SIGINT, inthand);
     signal(SIGTSTP, inthand);
@@ -181,10 +168,12 @@ prompt_shell(shell_t *shell)
         }
         /* In the tty */
         if (_tty) {
+            rl_bind_key(12, clear_wrapper);
             rl_completion_display_matches_hook = my_completion_display_matches;
             if (line = readline(_gbuf), !line) {
                 return 42;
             }
+            count_readline++;
         }
 
         garbage_collector(line, shell);
