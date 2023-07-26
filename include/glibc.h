@@ -46,6 +46,7 @@
     #include <readline/readline.h>
     #include <readline/history.h>
     #include <signal.h>
+    #include <pwd.h>
     #include <termios.h>
 
 #endif /* !GLIBC_H_ */
