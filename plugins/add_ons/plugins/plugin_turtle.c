@@ -261,7 +261,8 @@ plugin_t *
 init(void)
 {
     char **env = (char **)malloc(sizeof(char *) * 13);
-    plugin_t *plugin = (plugin_t*)malloc(sizeof(plugin_t *));
+    plugin_t *plugin = (plugin_t*)malloc(sizeof(plugin_t));
+
     if (plugin == NULL) {
         exit(EXIT_FAILURE);
     }

@@ -16,7 +16,7 @@ execution_disp(int ac, char **av)
 plugin_t *
 init(void)
 {
-    plugin_t *plugin = (plugin_t*)malloc(sizeof(plugin_t *));
+    plugin_t *plugin = (plugin_t*)malloc(sizeof(plugin));
     if (!plugin) {
         exit(EXIT_FAILURE);
     }

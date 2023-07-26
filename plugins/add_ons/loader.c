@@ -31,7 +31,7 @@ load_and_run_plugin(char *plugin_name, char *function_name, char **command)
 {
     void *handle = DEFAULT(handle);
     char *error = DEFAULT(error);
-    plugin_func func;
+    plugin_func func = NULL;
     plugin_t *plugin = DEFAULT(plugin);
     int32_t rt_ptr_function = DEFAULT(rt_ptr_function);
 
@@ -41,20 +41,23 @@ load_and_run_plugin(char *plugin_name, char *function_name, char **command)
     }
 
     dlerror();
-    *(void **)(&func) = dlsym(handle, function_name);
+    *(void **)(&func) = (plugin_t*)dlsym(handle, function_name);
     if ((error = dlerror()) != NULL) {
         exit(1);
     }
 
-    plugin = (plugin_t*)(*func)();
+    plugin = (func)();
+    if (!plugin) {
+        fprintf(stderr, "func() did not return a valid pointer\n");
+        exit(1);
+    }
+
     rt_ptr_function = -8888;
 
     if (strcmp(command[0], plugin->command) == 0) {
         rt_ptr_function = plugin->execute(len_array(command), command);
     }
-
     dlclose(handle);
-    free(plugin);
 
     return rt_ptr_function;
 }
@@ -73,7 +76,7 @@ get_shared_libraries(const char *dir_path, uint32_t *num_libraries)
 
     libraries = malloc(capacity * sizeof(char *));
     if (!libraries) {
-        exit(1);
+        exit(_MEM_ALLOCA_ERROR);
     }
 
     if ((dir = opendir(dir_path)) == NULL) {
