@@ -55,7 +55,7 @@ wildcard_convert_loop_get_format(wildcard_t *wildcard, size_t *i,
         convert->converted_format);
     if (!convert->word_array)
         return 84;
-    free(convert->converted_format);
+    _free(convert->converted_format);
 
     return 0;
 }
@@ -72,9 +72,9 @@ wildcard_convert_loop(wildcard_t *wildcard, size_t *i,
         buffer_back_cursor(wildcard->new_command,
             *i - convert->last_space_index);
         buffer_append(wildcard->new_command, convert->word_array);
-        free(convert->word_array);
+        _free(convert->word_array);
         *i += strlen(convert->format) - 1;
-        free(convert->format);
+        _free(convert->format);
     } else {
         buffer_append_char(wildcard->new_command,
             wildcard->command[*i]);

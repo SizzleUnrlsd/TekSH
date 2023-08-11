@@ -46,7 +46,8 @@ wildcard_list_files(char *pwd)
     size_t index = DEFAULT(index);
     struct dirent *dirent = DEFAULT(dirent);
     DIR *dir = DEFAULT(dir);
-    char **list = malloc(sizeof(char *) * (count + 1));
+
+    char **list = _malloc(sizeof(char *) * (count + 1));
     if (!list)
         return NULL;
     list[count] = NULL;
@@ -58,7 +59,7 @@ wildcard_list_files(char *pwd)
     dirent = readdir(dir);
     while (dirent != NULL) {
         if (dirent->d_name[0] != '.')
-            list[index++] = strdup(dirent->d_name);
+            list[index++] = _strdup(dirent->d_name);
         dirent = readdir(dir);
     }
     closedir(dir);
