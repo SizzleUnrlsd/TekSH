@@ -24,6 +24,7 @@ getgit_branch()
 {
     char _buf[128] = {0};
     char *branch = NULL;
+    char *tmp = NULL;
     size_t len = DEFAULT(len);
     FILE *fp = fopen(".git/HEAD", "r");
     if (!fp) {
@@ -40,6 +41,7 @@ getgit_branch()
         }
     }
     fclose(fp);
-
-    return strdup(branch);
+    tmp = strdup(branch);
+    garbage_backup_ptr(tmp);
+    return tmp;
 }

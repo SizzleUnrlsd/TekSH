@@ -23,7 +23,6 @@ void
 shell_requirement(shell_t *shell, char **env,
 call_alias_t **call_alias UNUSED_ARG)
 {
-    init_garbage(shell);
     init_env(shell, env);
     init_alias(shell);
     init_local_env(shell);

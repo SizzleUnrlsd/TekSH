@@ -269,7 +269,7 @@ my_completion_display_matches(char **matches,
     }
 
     if (( a%2 ) == 0 && first_comp == NULL && last_comp == NULL) {
-        first_comp = strdup(rl_line_buffer);
+        first_comp = _strdup(rl_line_buffer);
         ++a;
         goto looser;
     }
