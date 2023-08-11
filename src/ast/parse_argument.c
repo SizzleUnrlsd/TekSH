@@ -31,6 +31,7 @@ parse_argument(char **input, shell_t *shell)
         && **input != '(' && **input != ')') {
             (*input)++;
     }
-    value = _strndup(start, *input - start);
+    value = strndup(start, *input - start);
+    garbage_backup_ptr((void*)value);
     return create_node(NODE_ARGUMENT, value, NULL, NULL, shell);
 }

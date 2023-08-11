@@ -60,64 +60,6 @@ pipe_child_process(shell_t *shell, pid_t pid1, int32_t *pipefd,
     return return_value_shell_1;
 }
 
-__attribute__((deprecated)) int32_t
-pipe_child_normal_process(shell_t *shell, pid_t pid1, int32_t *pipefd, ...)
-{
-    pid_t pid2;
-    node_t *cmd2_node = DEFAULT(cmd2_node);
-    int32_t return_value_shell_1 = DEFAULT(return_value_shell_1);
-    int32_t return_value_shell_2 = DEFAULT(return_value_shell_2);
-
-    va_list ap;
-    va_start(ap, pipefd);
-    cmd2_node = va_arg(ap, node_t*);
-    return_value_shell_1 = va_arg(ap, uint32_t);
-    va_end(ap);
-
-    pid2 = fork();
-    if (pid2 == 0 && cmd2_node != NULL) {
-        shell->status = DEFAULT(shell->status);
-        dup2(pipefd[0], STDIN_FILENO);
-        close(pipefd[0]); close(pipefd[1]);
-        ast(cmd2_node, shell);
-        return_value_shell_2 = shell->status;
-        waitpid(pid1, NULL, 0);
-        _exit(0);
-        EXIT_W_ECHO_ERROR_("Command not found.", EXIT_FAILURE);
-    }
-    terminate_pipe(shell, pipefd, pid1, pid2,
-    return_value_shell_1, return_value_shell_2);
-    return 0;
-}
-
-__attribute__((deprecated)) int32_t
-pipe_child_with_no_printable_process(shell_t *shell, pid_t pid1,
-                                            int32_t *pipefd, ...)
-{
-    node_t *cmd2_node = DEFAULT(cmd2_node);
-    int32_t return_value_shell_1 = DEFAULT(return_value_shell_1);
-    int32_t return_value_shell_2 = DEFAULT(return_value_shell_2);
-
-    va_list ap;
-    va_start(ap, pipefd);
-    cmd2_node = va_arg(ap, node_t*);
-    return_value_shell_1 = va_arg(ap, uint32_t);
-    va_end(ap);
-
-    if (cmd2_node->value != NULL
-    && is_builtin(shell, cmd2_node->value) != -1) {
-        shell->status = 0;
-        close(pipefd[0]); close(pipefd[1]);
-        ast(cmd2_node, shell);
-        return_value_shell_2 = shell->status;
-        waitpid(pid1, NULL, 0);
-        terminate_pipe(shell, pipefd, pid1, 0,
-        return_value_shell_1, return_value_shell_2);
-        return 0;
-    }
-    return 0;
-}
-
 int32_t
 execute_pipeline(node_t *cmd1_node, node_t *cmd2_node, shell_t *shell)
 {

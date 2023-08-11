@@ -19,31 +19,12 @@
 
 #include "shell.h"
 
-static char *
-my_str_dup(char const *src)
-{
-    int32_t count = DEFAULT(count);
-    char *dest = DEFAULT(dest);
-
-    dest = (char*)malloc(sizeof(char) * (_strlen(src) + 1));
-    if (!dest) {
-        exit(_MEM_ALLOCA_ERROR);
-    }
-
-    while (src[count] != '\0') {
-        dest[count] = src[count];
-        count++;
-    }
-    dest[count] = '\0';
-
-    return (dest);
-}
-
 char *
 node_to_string(node_t *node)
 {
     if (node == NULL || node->type != NODE_ARGUMENT) {
         return NULL;
     }
-    return my_str_dup(node->value);
+
+    return _strdup(node->value);
 }

@@ -32,7 +32,7 @@ create_node(nodetype type, char *value, ...)
     left = va_arg(ap, node_t *);
     right = va_arg(ap, node_t *);
     shell = va_arg(ap, shell_t *);
-    node = (node_t *)malloc_attribut(sizeof(node_t), shell);
+    node = (node_t *)_malloc(sizeof(node_t));
     node->type = type;
     node->value = value;
     node->left = left;
@@ -40,4 +40,5 @@ create_node(nodetype type, char *value, ...)
     va_end(ap);
 
     return node;
+    (void)shell;
 }
