@@ -22,13 +22,14 @@
 void
 init_alias(shell_t *shell)
 {
-    shell->call_alias = malloc_attribut(sizeof(call_alias_t), shell);
+    shell->call_alias =_mallocbucket(sizeof(call_alias_t));
     shell->call_alias->info_alias =
-    malloc_attribut(sizeof(info_alias_t), shell);
+    _mallocbucket(sizeof(info_alias_t));
 
     shell->call_alias->alias =
-    calloc_attribut(sizeof(alias_t *), SET_ALIAS, shell);
-
+    calloc(sizeof(alias_t *), SET_ALIAS);
+    garbage_backup_bucket_ptr(shell->call_alias->alias);
+    
     shell->call_alias->info_alias->is_an_alias = false;
     shell->call_alias->info_alias->current_alloc = 0;
     shell->call_alias->info_alias->nb = 1;

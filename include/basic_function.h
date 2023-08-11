@@ -43,14 +43,13 @@
     size_t _strnlen(const char *s, size_t maxlen);
     int32_t _strcmp(char const *s1, char const *s2);
     char *_strndup(const char *s, size_t n);
-    char *_strdup(char const *src, shell_t *shell);
+    char *_strdup(char const *src);
     char *_strncpy(char *dest, char const *src, uint32_t n);
     int32_t _strncmp(char const *s1, char const *s2, uint32_t n);
-    char **_str_to_word_array_custom(shell_t *shell, char *str, char c);
+    char **_str_to_word_array_custom(char *str, char c);
     char **re_alloc(shell_t *shell, char **src,
             int32_t len_src, int32_t len_dest);
-    char **_str_to_word_array_custom_double(shell_t *shell, char *str,
-                                                        char c, char x);
+    char **_str_to_word_array_custom_double(char *str, char c, char x);
 
         /* INIT_SHELL */
 
@@ -90,7 +89,7 @@
     int32_t builtin_unsetenv(shell_t *shell);
     char *find_home(shell_t *shell, char *home);
     void sort_in_int_array(int *a, int32_t len);
-    int32_t is_builtin(shell_t *shell, char *cmd);
+    int32_t is_builtin(char *cmd);
     int32_t build_cd_bar(shell_t *shell, char **arg);
     int32_t already_in_env(shell_t *shell, int32_t mode);
     int32_t pwd_already_ini_env(shell_t *shell, char *str);
@@ -123,8 +122,8 @@
     char *cut_into_command(char *command);
     void parse_command(char *cmd, char **args);
     void parent_exit(shell_t *shell, int32_t wstatus);
-    char **parse_stdin(char *command, shell_t *shell);
-    char **cut_path_env(shell_t *shell, char **array);
+    char **parse_stdin(char *command);
+    char **cut_path_env(char **array);
     bool char_stream_formatting(shell_t *shell, char **command);
     void execute_command(char **arg, shell_t *shell);
     int32_t access_file(shell_t *shell, char **path);

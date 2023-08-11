@@ -32,47 +32,41 @@ char *set_unset_env_ext(int32_t i, char **arg, char **env, char *second_step)
 void set_unset_in_env(shell_t *shell, char **env, int32_t len_arg)
 {
     int32_t i = DEFAULT(i);
-    char *second_step = DEFAULT(second_step); char **arg = parse_stdin(shell->get_line, shell);
+    char *second_step = DEFAULT(second_step); char **arg = parse_stdin(shell->line);
     char **first_step =
-    (char**)malloc_attribut(sizeof(char *) * len_array(env) + 2, shell);
+    (char**)_mallocbucket(sizeof(char *) * (len_array(env) + 2));
     i = function_set_param_env(i, env, first_step, shell);
 
     for (int32_t index = 0; env[index]; index++) {
         first_step = _str_to_word_array_custom
-        (shell, shell->set_env->env_array[index], '=');
-        if ((_strcmp(first_step[0], arg[1]) == 0) && len_arg == 3) {
-            free_attribut(env[index], shell);
-            garbage_collector
-            (set_unset_env_ext(index, arg, env, second_step), shell);
-        }
+        (shell->set_env->env_array[index], '=');
         if ((_strcmp(first_step[0], arg[1]) == 0) && len_arg == 2) {
             arg[2] = " ";
-            free_attribut(env[index], shell);
             set_unset_env_ext(index, arg, env, second_step);
         }
     }
     return;
 }
 
-void set_in_env_full(shell_t *shell, char **env,
-                int32_t len_arg, int32_t in_env)
+void set_in_env_full(shell_t *shell UNUSED_ARG,
+                                    char **env,
+                                int32_t len_arg,
+                                int32_t in_env)
 {
     int32_t i = DEFAULT(i), fmall = DEFAULT(fmall);
 
     if (len_arg == 3 && in_env == -3) {
         char *second_step = NULL;
-        char **arg = parse_stdin(shell->get_line, shell);
+        char **arg = parse_stdin(shell->line);
         char **first_step =
-        (char**)malloc_attribut(sizeof(char *) * (len_array(env) + 2), shell);
+        (char**)_mallocbucket(sizeof(char *) * (len_array(env) + 2));
         fmall = _strlen(arg[2]);
 
         i = function_set_param_env(i, env, first_step, shell);
 
         second_step = concat_char_str('=', arg[1], fmall, 1);
-        garbage_collector(second_step, shell);
         first_step[i] = _strcat(second_step, arg[2]);
         first_step[i + 1] = NULL;
-        free_attribut(shell->set_env->env_array, shell);
         shell->set_env->env_array = first_step;
     }
     return;
@@ -83,13 +77,12 @@ set_in_env_empty(shell_t* shell, char **env, int32_t len_arg, int32_t in_env)
 {
     int32_t i = DEFAULT(i);
     if (len_arg == 2 && in_env == -3) {
-        char **arg = parse_stdin(shell->get_line, shell);
+        char **arg = parse_stdin(shell->line);
         char **first_step =
-        (char**)malloc_attribut(sizeof(char *) * (len_array(env) + 3), shell);
+        (char**)_mallocbucket(sizeof(char *) * (len_array(env) + 3));
 
         i = function_set_param_env(i, env, first_step, shell);
         first_step[i] = concat_char_str('=', arg[1], 0, 1);
-        garbage_collector(first_step[i], shell);
         first_step[i + 1] = NULL;
         shell->set_env->env_array = first_step;
     }

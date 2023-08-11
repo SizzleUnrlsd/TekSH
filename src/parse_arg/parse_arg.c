@@ -19,25 +19,46 @@
 
 #include "shell.h"
 
-flag_handler_t flagHandlers[] = {
+bool verbosity = false;
+
+bool noeffect = false;
+
+static inline void
+verbose_opt(void)
+{
+    verbosity = true;
+}
+
+static inline void
+noeffect_opt(void)
+{
+    noeffect = true;
+}
+
+flag_handler_t flaghandlers[] = {
     {"--version", handleVersion},
+    {"--verbose", verbose_opt},
+    {"--noeffect", noeffect_opt},
 };
 
 void
 parse_arg(int32_t ac, char **av)
 {
 
-    int32_t nb_flags = sizeof(flagHandlers) / sizeof(flagHandlers[0]);
+    int32_t nb_flags = sizeof(flaghandlers) / sizeof(flaghandlers[0]);
     if (ac < 2) {
         return;
     }
 
-    for (int32_t i = 0; i < nb_flags; i++) {
-        if (strcmp(av[1], flagHandlers[i].flag) == 0) {
-            flagHandlers[i].handler();
-            return;
+    for (int32_t i = 1; i != ac; ++i) {
+        for (int32_t e = 0; e != nb_flags; ++e) {
+            if (strcmp(av[i], flaghandlers[e].flag) == 0) {
+                flaghandlers[e].handler();
+            }
         }
     }
+
+    
 
     return;
 }

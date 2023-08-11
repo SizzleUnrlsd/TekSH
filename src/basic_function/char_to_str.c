@@ -20,7 +20,7 @@
 char *
 chr_to_str(char c)
 {
-    char *str = (char*)malloc(sizeof(char) * 2);
+    char *str = (char*)_malloc(sizeof(char) * 2);
     if (str == NULL)
         return NULL;
     str[0] = c;

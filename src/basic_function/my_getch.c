@@ -25,7 +25,7 @@ _getch(int a)
     int rd = read(STDIN_FILENO, buffer, a);
 
     buffer[rd - 1] = '\0';
-    str = malloc(sizeof(char) * (rd));
+    str = _malloc(sizeof(char) * (rd));
     if (!str) {
         _p_error(_MEM_ALLOCA_ERROR);
     }

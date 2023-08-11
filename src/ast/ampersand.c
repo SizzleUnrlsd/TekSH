@@ -96,7 +96,10 @@ ampersand(node_t *node, shell_t *shell)
             act.sa_flags = 0;
             sigaction(SIGINT, &act, NULL);
 
-            _buf_output(node, shell);
+            /* Buffer not work */
+            // _buf_output(node, shell);
+            ast(node, shell);
+
             _printf("[%d] %d done\t\t\t\t", job_control, getpid());
             _print("\n");
 

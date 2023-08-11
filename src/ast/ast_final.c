@@ -65,17 +65,17 @@ ast(node_t *node, shell_t *shell)
             char *tmp = DEFAULT(tmp);
             char **arg = DEFAULT(arg);
 
-            shell->get_line = node->value;
+            shell->line = node->value;
             tmp = update_wildcard(node->value, shell);
             if (tmp == NULL)
                 break;
-            arg = parse_stdin(tmp, shell);
+            arg = parse_stdin(tmp);
             execute_command(arg, shell);
             reset_var_shell(shell);
             break;
             }
         default:
-            exit_shell(shell);
+            exit(0);
     }
     return;
 }
@@ -88,7 +88,15 @@ ast_final(char *command, shell_t *shell)
     node_t *root = parse_semicolon(&command, shell);
 
     save_descriptor(&save_0, &save_1, shell->print);
-    ast(root, shell);
+
+    if (verbosity == 1) {
+        ast_printable(root, shell);
+        printf("\n");
+    }
+    if (noeffect != 1) {
+        ast(root, shell);
+    }
+
     descriptor_restoration(save_0, save_1, shell->print);
     return 0;
 }

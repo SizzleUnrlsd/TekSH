@@ -18,12 +18,12 @@
 #include "shell.h"
 
 char *
-_strdup(char const *src,  shell_t *shell)
+_strdup(char const *src)
 {
-    int32_t count = 0;
-    char *dest = NULL;
+    int32_t count = DEFAULT(count);
+    char *dest = DEFAULT(dest);
 
-    dest = (char*)malloc_attribut(sizeof(char) * (_strlen(src) + 1), shell);
+    dest = (char*)_mallocbucket(sizeof(char) * (_strlen(src) + 1));
     while (src[count] != '\0') {
         dest[count] = src[count];
         count++;
