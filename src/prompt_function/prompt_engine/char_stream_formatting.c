@@ -74,7 +74,7 @@ formatting_brackets(char *command)
         }
     }
 
-    result = (char *)malloc(newLength + 1); // allocating memory for the new string
+    result = (char *)_malloc(newLength + 1); // allocating memory for the new string
 
     for (int i = 0; i < length; i++) {
         if (command[i] == '(') {

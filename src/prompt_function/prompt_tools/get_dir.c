@@ -40,8 +40,8 @@ get_dir(void)
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
         replace_substr(cwd, get_home(), "~");
         if (strlen(cwd) == 1)
-            return strdup(strcat(cwd, "/"));
-        return strdup(cwd);
+            return _strdup(strcat(cwd, "/"));
+        return _strdup(cwd);
     } else {
         return "UNDEFINE";
     }

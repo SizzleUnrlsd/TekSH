@@ -47,7 +47,7 @@ concat_str(const char *str1, const char *str2, ...)
     size_t len2 = strlen(str2);
     const char *str = DEFAULT(str);
 
-    char *result = (char *)malloc(sizeof(char) * (len1 + len2 + 1));
+    char *result = (char *)_mallocbucket(sizeof(char) * (len1 + len2 + 1));
     if (!result) {
         exit(EXIT_FAILURE);
     }
@@ -58,7 +58,7 @@ concat_str(const char *str1, const char *str2, ...)
     
     while ((str = va_arg(args, const char *)) != NULL) {
         size_t len = strlen(str);
-        result = (char *)realloc(result, sizeof(char) * (len1 + len2 + len + 1));
+        result = (char *)_realloc(result, sizeof(char) * (len1 + len2 + len + 1));
         if (!result) {
             exit(EXIT_FAILURE);
         }
@@ -85,7 +85,8 @@ char *set_promt(void)
         sprintf(prompt, " ");
 
     _detail = concat_str("\033[0;34m[", reset, get_dir(), "\033[0;34m]", reset, prompt, NULL);
-    return strdup(_detail);
+    garbage_backup_ptr(_detail);
+    return _strdup(_detail);
 }
 
 /* Sigint management */
@@ -151,7 +152,6 @@ prompt_shell(shell_t *shell)
     if (!detail) {
         _p_error(_MEM_ALLOCA_ERROR);
     }
-    garbage_collector(detail, shell);
 
     do {
         if (shell->status == 0 && RD_TTY) {
@@ -173,10 +173,10 @@ prompt_shell(shell_t *shell)
             if (line = readline(_gbuf), !line) {
                 return 42;
             }
+            garbage_backup_ptr((void*)line);
             count_readline++;
         }
 
-        garbage_collector(line, shell);
         if (errno == EINTR) {
             continue;
         }
@@ -186,8 +186,8 @@ prompt_shell(shell_t *shell)
         }
         if (line && *line) {
             add_history(line);
-            shell->get_line = line;
-            ENV_PATH = cut_path_env(shell, ENV_SET_ARRAY);
+            shell->line = line;
+            ENV_PATH = cut_path_env(ENV_SET_ARRAY);
             save_history("history.txt");
         } else if (line) {
             print_str(detail, 0, RD_TTY, 1);

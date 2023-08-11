@@ -27,7 +27,7 @@ saving_error_file(shell_t *shell)
     FILE* file = fopen(path, mode);
     char log[256] = {0};
 
-    sprintf(log, "%s/%s", shell->get_line, ARCH);
+    sprintf(log, "%s/%s", shell->line, ARCH);
     fprintf(file, "%s\n", log);
     fclose(file);
 }

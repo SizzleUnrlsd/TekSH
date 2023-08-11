@@ -23,6 +23,7 @@ int32_t
 dollar_engine(char **arg, int32_t i, shell_t *shell)
 {
     char *tmp = NULL;
+
     if (arg[i][0] == '$') {
         if (_strcmp(arg[i], "$?") == 0) {
             _printfe("%d", shell->status);

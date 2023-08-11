@@ -29,14 +29,14 @@ init_env(shell_t *shell, char **env)
         {"HOSTTYPE=", "VENDOR=", "OSTYPE=",
         "MACHTYPE=", "SHLVL=1", "PWD=", NULL};
         
-        shell->set_env = (set_env_t*)malloc_attribut(sizeof(set_env_t), shell);
-        shell->set_env->env_array = (char**)malloc_attribut(sizeof(char *) * 7, shell);
+        shell->set_env = (set_env_t*)_mallocbucket(sizeof(set_env_t));
+        shell->set_env->env_array = (char**)_mallocbucket(sizeof(char *) * 7);
         memcpy(shell->set_env->env_array, env_null, 7 * sizeof(char *));
         shell->set_env->env_array[7 - 1] = NULL;
         return;
     } else {
-        shell->set_env = (set_env_t*)malloc_attribut(sizeof(set_env_t), shell);
-        shell->set_env->env_array = (char**)malloc_attribut(sizeof(char *) * full_size, shell);
+        shell->set_env = (set_env_t*)_mallocbucket(sizeof(set_env_t));
+        shell->set_env->env_array = (char**)_mallocbucket(sizeof(char *) * full_size);
         memcpy(shell->set_env->env_array, env, full_size * sizeof(char *));
         shell->set_env->env_array[full_size - 1] = NULL;
         return;

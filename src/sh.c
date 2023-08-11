@@ -41,23 +41,30 @@ void shell_engine(shell_t *shell, char **env)
         if (prompt_shell(shell) == 42) {
             ENDING_PROCESS_("exit", 0);
         }
-        if (char_stream_formatting(shell, &shell->get_line)) {
+        if (char_stream_formatting(shell, &shell->line)) {
             continue;
         }
-        new_line = format_alias_getline(shell, shell->get_line);
+        new_line = format_alias_getline(shell, shell->line);
 
         if (shell->call_alias->info_alias->is_an_alias != false) {
-            shell->get_line = strdup(new_line);
+            shell->line = _strdup(new_line);
         }
-
 #ifndef DEBUG
         if (sigsetjmp(env_stack, 1) == 0) {
-            ast_final(shell->get_line, shell);
+            ast_final(shell->line, shell);
+            rl_cleanup_after_signal();
+            rl_free(shell->line);
+            rl_free_line_state();
+            garbage_routine();
         } else {
             saving_error_file(shell);
         }
 #else
-        ast_final(shell->get_line, shell);
+        ast_final(shell->line, shell);
+        rl_cleanup_after_signal();
+        rl_free(shell->line);
+        rl_free_line_state();
+        garbage_routine();
 #endif
     }
 }
@@ -72,6 +79,7 @@ int main(int32_t ac UNUSED_ARG, char **av, char **env UNUSED_ARG)
 {
     shell_t *shell = DEFAULT(shell);
 
+    garbage_constructor();
     parse_arg(ac, av);
 
 #ifndef DEBUG

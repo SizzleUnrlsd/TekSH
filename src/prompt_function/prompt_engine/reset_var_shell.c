@@ -29,7 +29,7 @@ reset_var_shell(shell_t *shell)
     shell->binary = 0;
     shell->built_shell_type_env = 0;
     shell->built_exit = 0;
-    shell->get_line = NULL;
+    shell->line = NULL;
     shell->len_arg = 0;
     job_control = 0;
 

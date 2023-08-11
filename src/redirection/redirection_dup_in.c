@@ -54,7 +54,7 @@ execute_command_with_redirection(shell_t *shell,
 }
 
 void
-redirection_dup_in_extend(shell_t *shell, char *file, char *cmd, ...)
+redirection_dup_in_extend(shell_t *shell UNUSED_ARG, char *file, char *cmd, ...)
 {
     char **arg = DEFAULT(arg);
     char *end_keyword = DEFAULT(end_keyword);
@@ -64,7 +64,6 @@ redirection_dup_in_extend(shell_t *shell, char *file, char *cmd, ...)
     va_start(ap, cmd);
 
     file = remove_space_before_string(file);
-    garbage_collector(file, shell);
     del_space_end_str(file);
 
     arg = va_arg(ap, char **);
@@ -96,6 +95,7 @@ redirection_dup_in(node_t *node, shell_t *shell)
     while (1) {
         print_str("?", ' ', RD_TTY, 2);
         read = getline(&line, &len, stdin);
+        garbage_backup_ptr((void*)line);
         if (read == -1)
             break;
         if (strcmp(line, end_keyword) == 0)

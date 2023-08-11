@@ -25,7 +25,7 @@ get_home(void)
     struct passwd *pw = getpwuid(getuid());
 
     if (pw != NULL && pw->pw_dir != NULL) {
-        return strdup(pw->pw_dir);
+        return _strdup(pw->pw_dir);
     } else {
         return NULL;
     }
