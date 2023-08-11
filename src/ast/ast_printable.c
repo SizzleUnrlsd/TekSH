@@ -67,6 +67,10 @@ ast_printable(node_t *node, shell_t *shell)
             ast_printable(node->right, shell);
             break;
         case NODE_SUBSHELL:
+            _print("(");
+            ast_printable(node->left, shell);
+            ast_printable(node->right, shell);
+            _print(")");
             break;
         case NODE_ARGUMENT:
             {
@@ -74,7 +78,7 @@ ast_printable(node_t *node, shell_t *shell)
             break;
             }
         default:
-            exit_shell(shell);
+            exit(0);
     }
     return;
 }
