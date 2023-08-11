@@ -33,7 +33,7 @@
         char *param;
         char *value;
         char *cd_old_path;
-        char *get_line;
+        char *line;
         char *cd_new_path;
         char *shell_color_code;
         int32_t *several_arg_builtin;

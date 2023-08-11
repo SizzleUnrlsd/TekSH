@@ -26,6 +26,7 @@
     #include "bultin_list.h"
     #include "basic_function.h"
     #include "garbage_collector.h"
+    #include "garbage-collector.h"
     #include "bucket.h"
     #include "alias.h"
     #include "plugin.h"
@@ -44,7 +45,12 @@
     #define ARCH "_ERROR"
 #endif
 
-#define UNUSED_ARG __attribute__((unused))
+#ifndef _UNUSED_
+#define _UNUSED_
+    #define UNUSED_ARG __attribute__((unused))
+
+#endif
+
 #define START_FIRST __attribute__((constructor(1000)))
 #define _VOID __attribute__((noreturn))
 #define _wur __attribute__((__warn_unused_result__))
@@ -75,6 +81,20 @@
 
 #endif
 
+
+#ifndef VERBOSE_GLOBAL_
+    #define VERBOSE_GLOBAL_
+    extern bool verbosity;
+
+#endif
+
+#ifndef NOEFFECT_GLOBAL_
+    #define NOEFFECT_GLOBAL_
+    extern bool noeffect;
+
+#endif
+
+
 #ifndef COMMAND_FOUND
     #define COMMAND_FOUND           \
     shell->command_not_found++;     \
@@ -100,7 +120,6 @@
     if (return_value == 1 && RD_TTY == 0) {         \
         print_str(str, '\n', true, 2);              \
         shell->status = return_value;               \
-        exit_shell(shell);                          \
         exit(return_value);                         \
     }
 
@@ -110,7 +129,6 @@
     #define EXPECTED_EXIT_
     #define ENDING_PROCESS_(const_char, int_expected) \
     print_str(const_char, '\n', RD_TTY, 1);           \
-    exit_shell(shell);                                \
     exit(int_expected);                               \
 
 #endif
@@ -130,27 +148,27 @@
 #ifndef ERROR_TYPE_VALUE_
     #define ERROR_TYPE_VALUE_
     enum _error_code {
-        _BUF_ERROR = 1,
-        _READ_ERROR = 2,
-        _FORK_ERROR = 3,
-        _FILE_ERROR = 4,
-        _WRITE_ERROR = 5,
-        _CONST_BUF_ERROR = 6,
-        _MEM_ALLOCA_ERROR = 7,
+        _BUF_ERROR           = 1,
+        _READ_ERROR          = 2,
+        _FORK_ERROR          = 3,
+        _FILE_ERROR          = 4,
+        _WRITE_ERROR         = 5,
+        _CONST_BUF_ERROR     = 6,
+        _MEM_ALLOCA_ERROR    = 7,
         _THREAD_ALLOCA_ERROR = 8,
-        _PIPE_ERROR = 9,
-        _OVERLAPPING_ERROR = 10,
+        _PIPE_ERROR          = 9,
+        _OVERLAPPING_ERROR   = 10,
     };
 
 #endif
 
 #ifndef TERMS_CAP_
     #define TERMS_CAP_
-    #define _CLEAR_TERM "\033c"
-    #define ANSI_COLOR_RED "\x1b[31m"
-    #define ANSI_COLOR_BLUE "\x1b[34m"
+    #define _CLEAR_TERM      "\033c"
+    #define ANSI_COLOR_RED   "\x1b[31m"
+    #define ANSI_COLOR_BLUE  "\x1b[34m"
     #define ANSI_COLOR_RESET "\x1b[0m"
-    #define ANSI_BOLD_ON "\x1b[1m"
+    #define ANSI_BOLD_ON     "\x1b[1m"
 
 #endif
 
@@ -222,13 +240,13 @@
 #ifndef _DEFAULT_VAR_
     #define _DEFAULT_VAR_
     #define DEFAULT(x) _Generic((x),    \
-    int32_t: 0,                         \
+    int32_t:  0,                        \
     uint32_t: 0,                        \
     float: 0.0f,                        \
     double: 0.0,                        \
-    char: '\0',                         \
-    unsigned char: 0,                   \
-    size_t: (size_t)0,                  \
+    char:  '\0',                        \
+    unsigned char:    0,                \
+    size_t:   (size_t)0,                \
     ssize_t: (ssize_t)0,                \
     void*: NULL,                        \
     default: NULL)
@@ -238,13 +256,13 @@
 #ifndef _RESET_VAR_
     #define _RESET_VAR_
     #define RESET(x) _Generic((x),      \
-    int32_t: 0,                         \
+    int32_t:  0,                        \
     uint32_t: 0,                        \
     float: 0.0f,                        \
     double: 0.0,                        \
-    char: '\0',                         \
-    unsigned char: 0,                   \
-    size_t: (size_t)0,                  \
+    char:  '\0',                        \
+    unsigned char:    0,                \
+    size_t:   (size_t)0,                \
     ssize_t: (ssize_t)0,                \
     void*: NULL,                        \
     default: NULL)
