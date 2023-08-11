@@ -25,7 +25,6 @@
     #include "ast.h"
     #include "bultin_list.h"
     #include "basic_function.h"
-    #include "garbage_collector.h"
     #include "garbage-collector.h"
     #include "bucket.h"
     #include "alias.h"
