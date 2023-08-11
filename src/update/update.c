@@ -51,7 +51,7 @@ char *get_readme_from_github(const char* repo_owner, const char* repo_name)
         return NULL;
     }
     output[output_size] = '\0';
-
+    garbage_backup_ptr(output);
     return output;
 }
 

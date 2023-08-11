@@ -53,10 +53,10 @@ cut_into_command(char *command)
     if (end == NULL) {
         return NULL;
     }
-    str = (char*)malloc(sizeof(char) *(end - start + 1));
+    str = (char*)_malloc(sizeof(char) *(end - start + 1));
     strncpy(str, start, end - start);
     str[end - start] = '\0';
-    ptr_command = strdup(str);
+    ptr_command = _strdup(str);
     format_command(&ptr_command);
 
     return ptr_command;

@@ -25,6 +25,7 @@ init_shell(void)
     shell_t *shell = calloc(1, sizeof(shell_t));
     if (!shell)
         exit(84);
+    garbage_backup_bucket_ptr(shell);
     shell->print = isatty(STDIN_FILENO);
     
     return shell;
