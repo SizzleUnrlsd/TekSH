@@ -20,31 +20,11 @@
 #include "shell.h"
 
 static char *
-_strdup_bool(char const *src,  shell_t *shell, bool stat)
-{
-    int32_t a = DEFAULT(a);
-    char *dest = DEFAULT(dest);
-
-    if (stat == true)
-        dest = (char*)malloc_attribut
-        (sizeof(char) * (_strlen(src) + 1), shell);
-    else
-        dest = malloc(sizeof(char) * (_strlen(src) + 1));
-
-    while (src[a] != '\0') {
-        dest[a] = src[a];
-        a++;
-    }
-    dest[a] = '\0';
-    return (dest);
-}
-
-static char *
-second_chance(shell_t *shell)
+second_chance(shell_t *shell UNUSED_ARG)
 {
     struct passwd *pw = getpwuid(getuid());
     if (pw != NULL && pw->pw_dir != NULL) {
-        return _strdup_bool(pw->pw_dir, shell, true);
+        return _strdup(pw->pw_dir);
     } else {
         return NULL;
     }
@@ -57,9 +37,9 @@ find_home(shell_t *shell, char *home)
     char **env = shell->set_env->env_array;
 
     for (int32_t i = 0; env[i]; i++) {
-        first_step = _str_to_word_array_custom(shell, env[i], '=');
+        first_step = _str_to_word_array_custom(env[i], '=');
         if (_strcmp(first_step[0], "HOME") == 0) {
-            home = _strdup_bool(first_step[1], shell, true);
+            home = _strdup(first_step[1]);
             return home;
         }
     }

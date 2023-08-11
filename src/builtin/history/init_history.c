@@ -22,6 +22,6 @@
 __attribute__((deprecated)) void
 init_history(shell_t *shell)
 {
-    shell->history = malloc_attribut(sizeof(history_t), shell);
+    shell->history = _mallocbucket(sizeof(history_t));
     shell->history->count_n = 1;
 }

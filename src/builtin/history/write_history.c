@@ -24,10 +24,10 @@ void check_replace_in_file(int found, FILE *fd, int pos, shell_t *shell)
     if (found) {
         fseek(fd, pos, SEEK_SET);
         dprintf(fileno(fd), "%d\t%d:%02d\t%s\n", shell->history->count_n,
-        shell->history->hour, shell->history->minute, shell->get_line);
+        shell->history->hour, shell->history->minute, shell->line);
     } else
         dprintf(fileno(fd), "%d\t%d:%02d\t%s\n", shell->history->count_n,
-        shell->history->hour, shell->history->minute, shell->get_line);
+        shell->history->hour, shell->history->minute, shell->line);
 }
 
 int replace_line_in_file(shell_t *shell, FILE *fd, int *pos, int *found)
@@ -47,7 +47,7 @@ int replace_line_in_file(shell_t *shell, FILE *fd, int *pos, int *found)
         command = strtok(NULL, "\n");
         if (command == NULL)
             return 1;
-        if (strcmp(command, shell->get_line) == 0) {
+        if (strcmp(command, shell->line) == 0) {
             *pos = ftell(fd) - shell->history->read;
             *found = 1;
             return 2;
@@ -80,6 +80,5 @@ int write_in_file(shell_t *shell)
     check_replace_in_file(found, fd, pos, shell);
     fclose(fd);
     shell->history->count_n++;
-    free(shell->history->line);
     return 0;
 }

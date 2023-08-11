@@ -27,14 +27,12 @@ set_new_old_pwd(shell_t *shell, char *path, char *mess_env)
     char *final = DEFAULT(final);
     char **diff = DEFAULT(diff);
 
-    free_attribut(shell->get_line, shell);
     concat = concat_char_str(' ', mess_env, fmall, 1);
-    garbage_collector(concat, shell);
     final = _strcat(concat, path);
     final = concat_char_str('\n', final, 1, 1);
-    shell->get_line = final;
+    shell->line = final;
 
-    diff = _str_to_word_array_custom(shell, mess_env, ' ');
+    diff = _str_to_word_array_custom(mess_env, ' ');
 
     if (pwd_already_ini_env(shell, diff[1]) == 1)
         add_line_to_array(shell, 3, 0);
@@ -54,7 +52,7 @@ build_cd_foo_extend(shell_t *shell, char **arg, char *home, int32_t len_arg)
     if ((home != NULL && len_arg == 1) ||
     ((_strcmp(arg[1], "~") == 0) && home != NULL)) {
         shell->cd_old_path = getcwd(NULL, 4096);
-        garbage_collector(shell->cd_old_path, shell);
+        garbage_backup_bucket_ptr(shell->cd_old_path);
         if (chdir(home) == -1) {
             EXIT_W_ECHO_ERROR_("cd: Can't change to home directory.", 1);
         }
@@ -101,14 +99,14 @@ build_cd_bar(shell_t *shell, char **arg)
             EXIT_W_ECHO_ERROR_(": No such file or directory.", 1);
         } else {
             char *path = getcwd(NULL, 4096);
-            garbage_collector(path, shell);
+            garbage_backup_ptr(path);
             set_new_old_pwd(shell, path, "setenv OLDPWD");
             if (chdir(shell->cd_old_path) == -1) {
                 EXIT_W_ECHO_ERROR_("chdir: Error.", 1);
             }
             shell->cd_old_path = shell->cd_new_path;
             shell->cd_new_path = getcwd(NULL, 4096);
-            garbage_collector(shell->cd_new_path, shell);
+            garbage_backup_bucket_ptr(shell->cd_new_path);
             set_new_old_pwd(shell, shell->cd_new_path, "setenv PWD");
         }
         return 1;
@@ -125,11 +123,11 @@ build_cd_foobar(shell_t *shell, char **arg,
 
     if (len_arg == 2 && check_perm_dir(shell, arg[1], invalid_cd) == 0) {
         shell->cd_old_path = getcwd(NULL, 4096);
-        garbage_collector(shell->cd_old_path, shell);
+        garbage_backup_bucket_ptr(shell->cd_old_path);
         set_new_old_pwd(shell, shell->cd_old_path, "setenv OLDPWD");
         result = chdir(arg[1]);
         shell->cd_new_path = getcwd(NULL, 4096);
-        garbage_collector(shell->cd_new_path, shell);
+        garbage_backup_bucket_ptr(shell->cd_new_path);
         set_new_old_pwd(shell, shell->cd_new_path, "setenv PWD");
         if (is_dir(arg[1]) == 1) {
             print_str(arg[1], 0, true, 2);

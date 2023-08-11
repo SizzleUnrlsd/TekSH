@@ -95,7 +95,7 @@ dollar_engine_echo(char **arg, int32_t i, shell_t *shell)
 int32_t
 _echo(shell_t *shell)
 {
-    char **arg = parse_stdin(shell->get_line, shell);
+    char **arg = parse_stdin(shell->line);
     int32_t len_arg = len_array(arg);
 
     COMMAND_FOUND;
