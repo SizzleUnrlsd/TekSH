@@ -21,7 +21,7 @@ char *
 concat_char_str(char concat, char *str, int32_t futur, int32_t a)
 {
     int32_t len_str = _strlen(str);
-    char *dest = (char*)malloc(sizeof(char) * (len_str + futur + 2));
+    char *dest = (char*)_malloc(sizeof(char) * (len_str + futur + 2));
 
     if (a == 0) {
         dest[0] = concat;

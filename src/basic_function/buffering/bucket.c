@@ -21,8 +21,8 @@
 
 bucket_str_t *bucket_str_init(void)
 {
-    bucket_str_t *sb = malloc(sizeof(bucket_str_t));
-    sb->buffer = (char *)malloc(sizeof(char) * BUCKET_SIZE);
+    bucket_str_t *sb = _malloc(sizeof(bucket_str_t));
+    sb->buffer = (char *)_malloc(sizeof(char) * BUCKET_SIZE);
     if (!sb || !sb->buffer) {
         return NULL;
     }
@@ -98,7 +98,7 @@ char *bucket_format(bucket_str_t *sb)
     char *str = sb->buffer;
     uint32_t count = 0;
     uint32_t len_str = _strlen(str);
-    char *new_str = malloc(sizeof(char) * len_str);
+    char *new_str = _malloc(sizeof(char) * len_str);
     if (!new_str)
         return NULL;
 
