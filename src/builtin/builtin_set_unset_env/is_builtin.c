@@ -20,7 +20,7 @@
 #include "shell.h"
 
 int32_t
-is_builtin(shell_t *shell, char *cmd)
+is_builtin(char *cmd)
 {
     char **arg = NULL;
     int32_t len_arg = 0;
@@ -28,7 +28,7 @@ is_builtin(shell_t *shell, char *cmd)
     if (cmd == NULL)
         return -1;
     cmd++;
-    arg = parse_stdin(_strdup(cmd, shell), shell);
+    arg = parse_stdin(_strdup(cmd));
     len_arg = len_array(arg);
 
     if (strncmp(cmd, "setenv", 6) == 0 && len_arg == 1)
