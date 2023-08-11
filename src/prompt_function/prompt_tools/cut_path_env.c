@@ -19,35 +19,7 @@
 
 #include "shell.h"
 
-void free_wh_garbage(char **full_env)
-{
-    for (uint32_t i = 0; full_env[i]; i++) {
-        free(full_env[i]);
-        full_env[i] = NULL;
-    }
-    free(full_env);
-
-    return;
-}
-
-void free_w_garbage(shell_t *shell, char **path)
-{
-    for (uint32_t i = 0; path[i]; i++)
-        garbage_collector(path[i], shell);
-    garbage_collector(path, shell);
-    return;
-}
-
-void free_specific(shell_t *shell, char **full_env)
-{
-    for (uint32_t i = 0; full_env[i]; i++) {
-        free_attribut(full_env[i], shell);
-        full_env[i] = NULL;
-    }
-    free_attribut(full_env, shell);
-}
-
-char **cut_path_env(shell_t *shell, char **array)
+char **cut_path_env(char **array)
 {
     char **path = DEFAULT(path);
     char **full_env = DEFAULT(full_env);
@@ -59,16 +31,16 @@ char **cut_path_env(shell_t *shell, char **array)
     }
 
     for (uint32_t i = 0; array[i] != NULL; i++) {
-        full_env = _str_to_word_array_custom(shell, array[i], '=');
+        full_env = _str_to_word_array_custom(array[i], '=');
         if (_strcmp(full_env[0], "PATH") == 0) {
             integer_path = 1;
             break;
         }
-        free_specific(shell, full_env);
+        // free_specific(shell, full_env);
     }
     if (integer_path == 0)
         return full_env;
-    path = _str_to_word_array_custom(shell, full_env[1], ':');
+    path = _str_to_word_array_custom(full_env[1], ':');
     full_env = NULL;
     return path;
 }

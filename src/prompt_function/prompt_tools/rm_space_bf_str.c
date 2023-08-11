@@ -19,22 +19,6 @@
 
 #include "shell.h"
 
-static char *
-_str_dup(char const *src)
-{
-    int32_t a = DEFAULT(a);
-    char *dest = NULL;
-
-    dest = (char*)malloc(sizeof(char) * (_strlen(src) + 1));
-    while (src[a] != '\0') {
-        dest[a] = src[a];
-        a++;
-    }
-    dest[a] = '\0';
-
-    return (dest);
-}
-
 char *
 remove_space_before_string(const char *command)
 {
@@ -45,5 +29,5 @@ remove_space_before_string(const char *command)
         command++;
     }
 
-    return _str_dup(command);
+    return _strdup(command);
 }
