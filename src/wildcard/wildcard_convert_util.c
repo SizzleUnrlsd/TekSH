@@ -43,7 +43,7 @@ char *
 wildcard_get_sub_string(char *str, size_t start, size_t end)
 {
     size_t index = DEFAULT(index);
-    char *sub_str = malloc(sizeof(char) * (end - start + 1));
+    char *sub_str = _malloc(sizeof(char) * (end - start + 1));
     if (!sub_str)
         return NULL;
 
@@ -66,7 +66,7 @@ convert_str_to_format(char *str)
             len++;
     }
 
-    format = malloc(sizeof(char) * (len + 1));
+    format = _malloc(sizeof(char) * (len + 1));
     if (!format)
         return NULL;
     format[len] = '\0';

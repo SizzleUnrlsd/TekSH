@@ -22,23 +22,16 @@
 wildcard_buffer_t *
 init_buffer(void)
 {
-    wildcard_buffer_t *buffer = malloc(sizeof(wildcard_buffer_t));
+    wildcard_buffer_t *buffer = _malloc(sizeof(wildcard_buffer_t));
     if (!buffer)
         return (NULL);
-    buffer->data = malloc(sizeof(char) * (BUFFER_BLOCK_SIZE + 1));
+    buffer->data = _malloc(sizeof(char) * (BUFFER_BLOCK_SIZE + 1));
     if (!buffer->data)
         return (NULL);
     memset(buffer->data, 0, sizeof(char) * (BUFFER_BLOCK_SIZE + 1));
     buffer->capacity = BUFFER_BLOCK_SIZE;
     buffer->size = 0;
     return buffer;
-}
-
-void
-terminate_buffer(wildcard_buffer_t *buffer)
-{
-    free(buffer->data);
-    free(buffer);
 }
 
 int32_t
@@ -54,7 +47,7 @@ buffer_append(wildcard_buffer_t *buffer, char *data)
         buffer->capacity += BUFFER_BLOCK_SIZE;
     }
 
-    buffer->data = realloc(buffer->data, buffer->capacity);
+    buffer->data = _realloc(buffer->data, buffer->capacity);
     if (!buffer->data)
         return EXIT_FAILURE;
     memset(buffer->data + buffer->size, 0, buffer->capacity - buffer->size);
@@ -72,7 +65,8 @@ buffer_append_char(wildcard_buffer_t *buffer, char c)
     while (buffer->size + 1 >= buffer->capacity) {
         buffer->capacity += BUFFER_BLOCK_SIZE;
     }
-    buffer->data = realloc(buffer->data, buffer->capacity);
+    buffer->data = _realloc(buffer->data, buffer->capacity);
+    garbage_backup_bucket_ptr(buffer->data);
     if (!buffer->data)
         return EXIT_FAILURE;
     memset(buffer->data + buffer->size, 0, buffer->capacity - buffer->size);

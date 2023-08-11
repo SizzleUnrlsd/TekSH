@@ -17,7 +17,6 @@
 
 #ifndef STRUCT_H_
     #define STRUCT_H_
-    #include "garbage_collector.h"
     #include "bultin_global_env.h"
     #include "history.h"
     #include "alias.h"
@@ -25,7 +24,6 @@
     typedef struct shell_s {
         history_t *history;
         set_env_t *set_env;
-        garbage_collector_t **garbage;
         call_alias_t *call_alias;
         char **local_env;
         char **cmd;

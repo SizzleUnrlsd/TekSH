@@ -35,11 +35,7 @@ is_input_valid_local(shell_t *shell)
 void
 init_local_env(shell_t *shell)
 {
-    shell->local_env = malloc(sizeof(char *) * 2);
-    if (!shell->local_env) {
-        _p_error(_MEM_ALLOCA_ERROR);
-    }
-    garbage_collector(shell->local_env, shell);
+    shell->local_env = _mallocbucket(sizeof(char *) * 2);
 
     shell->local_env[0] = NULL;
     shell->local_env[1] = NULL;
@@ -78,7 +74,7 @@ my_set(shell_t *shell)
     char *k_v = DEFAULT(k_v);
 
     COMMAND_FOUND;
-    shell->cmd = parse_stdin(shell->get_line, shell);
+    shell->cmd = parse_stdin(shell->line);
     if (shell->local_env == NULL) {
         init_local_env(shell);
         return 1;
@@ -94,7 +90,7 @@ my_set(shell_t *shell)
         return 1;
     len = my_envlen(shell->local_env);
     k_v = my_strconcat(shell->cmd[1], my_strconcat("=", shell->cmd[2]));
-    shell->local_env = realloc(shell->local_env, sizeof(char *) * (len + 2));
+    shell->local_env = _realloc(shell->local_env, sizeof(char *) * (len + 2));
     shell->local_env[len] = k_v;
     shell->local_env[len + 1] = NULL; return 1;
 }

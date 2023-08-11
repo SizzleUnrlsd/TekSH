@@ -57,8 +57,7 @@ wildcard_transform(wildcard_t *wildcard, char *format)
     if (wildcard_transform_loop(wildcard, &regex, buffer) != 0)
         return NULL;
     regfree(&regex);
-    word_array = strdup(buffer_get_data(buffer));
-    terminate_buffer(buffer);
+    word_array = _strdup(buffer_get_data(buffer));
 
     return word_array;
 }

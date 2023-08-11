@@ -22,7 +22,7 @@
 int32_t
 builtin_exit(shell_t *shell)
 {
-    char **arg = parse_stdin(shell->get_line, shell);
+    char **arg = parse_stdin(shell->line);
     int32_t len_arg = len_array(arg);
 
     COMMAND_FOUND;
@@ -35,8 +35,8 @@ builtin_cd(shell_t *shell)
 {
     char *home = DEFAULT(home);
     uint32_t invalid_cd = DEFAULT(invalid_cd);
-    char **arg = parse_stdin(shell->get_line, shell);
-    int32_t len_arg = len_array(parse_stdin(shell->get_line, shell));
+    char **arg = parse_stdin(shell->line);
+    int32_t len_arg = len_array(arg);
 
     COMMAND_FOUND;
     if (build_cd_foo(shell, home, arg, len_arg) == 1) {
@@ -59,7 +59,7 @@ int32_t
 builtin_setenv(shell_t *shell)
 {
     int32_t in_env = DEFAULT(in_env), mode_builtin = 1;
-    char **arg = parse_stdin(shell->get_line, shell);
+    char **arg = parse_stdin(shell->line);
     int32_t len_arg = len_array(arg);
     COMMAND_FOUND;
 
@@ -84,7 +84,7 @@ int32_t
 builtin_unsetenv(shell_t *shell)
 {
     int32_t count = DEFAULT(count), in_env = DEFAULT(in_env), mode_builtin = DEFAULT(mode_builtin);
-    char **arg = parse_stdin(shell->get_line, shell);
+    char **arg = parse_stdin(shell->line);
     int32_t len_arg = len_array(arg);
     int32_t len_env = len_array(shell->set_env->env_array);
     shell->mode = DEFAULT(shell->mode);

@@ -20,7 +20,7 @@
 #include "shell.h"
 
 __attribute__((deprecated)) char *
-update_wildcard(char *command, shell_t *shell)
+update_wildcard(char *command, shell_t *shell UNUSED_ARG)
 {
     char *new_command = DEFAULT(new_command);
     wildcard_t *wildcard = init_wildcard(command);
@@ -30,11 +30,11 @@ update_wildcard(char *command, shell_t *shell)
     if (wildcard_convert(wildcard) == 84)
         return NULL;
 
-    new_command = strdup(buffer_get_data(wildcard->new_command));
+    new_command = _strdup(buffer_get_data(wildcard->new_command));
     if (!new_command)
         return NULL;
-    garbage_collector(new_command, shell);
-    terminate_wildcard(wildcard);
+    // garbage_collector(new_command, shell);
+    // terminate_wildcard(wildcard);
 
     return new_command;
 }
@@ -42,12 +42,13 @@ update_wildcard(char *command, shell_t *shell)
 __attribute__((deprecated)) wildcard_t *
 init_wildcard(char *command)
 {
-    wildcard_t *wildcard = malloc(sizeof(wildcard_t));
+    wildcard_t *wildcard = _malloc(sizeof(wildcard_t));
     if (!wildcard)
         return NULL;
 
     wildcard->command = command;
     wildcard->pwd = getcwd(NULL, 0);
+    garbage_backup_ptr(wildcard->pwd);
     if (!wildcard->pwd)
         return NULL;
 
@@ -65,12 +66,11 @@ init_wildcard(char *command)
 __attribute__((deprecated)) void
 terminate_wildcard(wildcard_t *wildcard)
 {
-    terminate_buffer(wildcard->new_command);
-    free(wildcard->pwd);
+    _free(wildcard->pwd);
     for (int i = 0; wildcard->file_list[i]; i++)
-        free(wildcard->file_list[i]);
-    free(wildcard->file_list);
-    free(wildcard);
+        _free(wildcard->file_list[i]);
+    _free(wildcard->file_list);
+    _free(wildcard);
 
     return;
 }

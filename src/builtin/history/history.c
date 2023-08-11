@@ -22,7 +22,7 @@
 #include "shell.h"
 
 __attribute__((deprecated)) int32_t
-display_history(shell_t *shell, char *str)
+display_history(shell_t *shell UNUSED_ARG, char *str)
 {
     struct stat buff;
     int32_t fd = open(str, O_RDONLY);
@@ -34,7 +34,7 @@ display_history(shell_t *shell, char *str)
     }
     stat(str, &buff);
     size = buff.st_size;
-    temp = malloc_attribut(sizeof(char) * (size + 1), shell);
+    temp = _malloc(sizeof(char) * (size + 1));
     if (read(fd, temp, size) == -1)
         return 1;
     if (write(1, temp, size) == -1) {
@@ -42,7 +42,6 @@ display_history(shell_t *shell, char *str)
     }
     temp[size] = '\0';
     close(fd);
-    free_attribut(temp, shell);
     return 0;
 }
 
@@ -50,7 +49,7 @@ int32_t
 builtin_history(shell_t *shell)
 {
     char *_default = "history";
-    char *cmd = shell->get_line + _strlen(_default) + 1;
+    char *cmd = shell->line + _strlen(_default) + 1;
 
     COMMAND_FOUND;
     using_history();
@@ -67,7 +66,7 @@ builtin_history(shell_t *shell)
         write_history("history.shell");
         return 0;
     }
-    if (strcmp(shell->get_line, _default) == 0) {
+    if (strcmp(shell->line, _default) == 0) {
         HIST_ENTRY** history_entries = history_list();
         if (history_entries != NULL) {
             for (uint64_t i = 0; history_entries[i] != NULL; i++) {

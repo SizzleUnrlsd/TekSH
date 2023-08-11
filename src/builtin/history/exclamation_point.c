@@ -84,7 +84,7 @@ __attribute__((deprecated)) int32_t
 builtin_exclamation(shell_t *shell)
 {
     int32_t future_shell_value = DEFAULT(future_shell_value);
-    char *cmd = strdup(shell->get_line);
+    char *cmd = strdup(shell->line);
     COMMAND_FOUND;
 
     if (cmd[0] == '!') {
