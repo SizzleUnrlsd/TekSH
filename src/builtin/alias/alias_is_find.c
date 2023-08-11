@@ -1,19 +1,21 @@
 /**
-* {{ project }}
-* Copyright (C) {{ year }}  {{ organization }}
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2023 hugo
+ * 
+ * This file is part of TekSH.
+ * 
+ * TekSH is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * TekSH is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with TekSH.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "shell.h"
 
@@ -23,9 +25,9 @@ pre_set_alias(call_alias_t *call_alias, shell_t *shell,
 {
     call_alias->alias[call_alias->info_alias->nb] = NULL;
     call_alias->alias[call_alias->info_alias->nb] =
-    malloc_attribut(sizeof(alias_t), shell);
+    _mallocbucket(sizeof(alias_t));
     call_alias->alias[call_alias->info_alias->nb]->cmd_alias =
-    strdup(arr_line[index + 1]);
+    _strdup(arr_line[index + 1]);
     call_alias->alias[call_alias->info_alias->nb]
     ->cmd_alias[strlen(arr_line[1])] = '\0';
     call_alias->alias[call_alias->info_alias->nb]->cmd_is_replace =
@@ -33,20 +35,18 @@ pre_set_alias(call_alias_t *call_alias, shell_t *shell,
 }
 
 void
-resize_alias_array(call_alias_t *call_alias, shell_t *shell)
+resize_alias_array(call_alias_t *call_alias, shell_t *shell UNUSED_ARG)
 {
     static size_t acceptance_limit = SET_ALIAS - ACCEPTANCE;
     if (call_alias->info_alias->nb >= SET_ALIAS - ACCEPTANCE) {
         call_alias->info_alias->current_alloc = call_alias->info_alias->nb;
         call_alias->alias =
-        realloc(call_alias->alias, sizeof(alias_t) * SET_ALIAS);
-        garbage_collector(call_alias->alias, shell);
+        _realloc(call_alias->alias, sizeof(alias_t) * SET_ALIAS);
         acceptance_limit = acceptance_limit + SET_ALIAS;
     }
     if (call_alias->info_alias->nb >= acceptance_limit - ACCEPTANCE) {
         call_alias->alias =
-        realloc(call_alias->alias, sizeof(alias_t) * SET_ALIAS);
-        garbage_collector(call_alias->alias, shell);
+        _realloc(call_alias->alias, sizeof(alias_t) * SET_ALIAS);
         acceptance_limit = acceptance_limit + SET_ALIAS;
     }
 }
@@ -94,5 +94,4 @@ if_alias_find(call_alias_t *call_alias, shell_t *shell, int cpt,
         ->cmd_is_replace);
         call_alias->info_alias->nb++;
     }
-    free_attribut(arr_line, shell);
 }
