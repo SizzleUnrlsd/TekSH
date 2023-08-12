@@ -83,7 +83,8 @@ parse_stdin(char *command)
     clean_arg = (char **)_malloc(sizeof(char *) * (a + 1));
     for (int32_t i = 0; arg[i]; i++) {
         if ((_strcmp(arg[i], " ") != 0) || (_strcmp(arg[i], "\t") != 0)) {
-            clean_arg[count] = _strdup(arg[i]);
+            clean_arg[count] = strdup(arg[i]);
+            garbage_backup_bucket_ptr(clean_arg[count]);
             count++;
         }
     }

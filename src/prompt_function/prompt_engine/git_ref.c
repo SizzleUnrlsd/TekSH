@@ -19,29 +19,32 @@
 
 #include "shell.h"
 
-char *
-getgit_branch()
+char *getgit_branch(void)
 {
     char _buf[128] = {0};
-    char *branch = NULL;
-    char *tmp = NULL;
-    size_t len = DEFAULT(len);
-    FILE *fp = fopen(".git/HEAD", "r");
+    char *branch = DEFAULT(branch);
+    size_t len = sizeof(_buf);
+    FILE *fp = popen("git name-rev --name-only HEAD 2>/dev/null", "r");
+
     if (!fp) {
-        return "UNDEFINE";
+        return "UNDEFINED";
     }
 
     if (fgets(_buf, sizeof(_buf), fp) != NULL) {
-        if (strncmp(_buf, "ref: refs/heads/", 16) == 0) {
-            branch = _buf + 16;
-            len = strlen(branch);
-            (len > 0 && branch[len - 1] == '\n') ? branch[len - 1] = '\0' : 0;
-        } else {
-            _print("NONE");
+        len = strlen(_buf);
+        if (len > 0 && _buf[len - 1] == '\n') {
+            _buf[len - 1] = '\0';
         }
+        branch = strdup(_buf);
+    } else {
+        branch = strdup("UNDEFINED");
     }
-    fclose(fp);
-    tmp = strdup(branch);
-    garbage_backup_ptr(tmp);
-    return tmp;
+
+    pclose(fp);
+
+    if (!branch)
+        return "UNDEFINED";
+
+    garbage_backup_ptr(branch);
+    return branch;
 }
