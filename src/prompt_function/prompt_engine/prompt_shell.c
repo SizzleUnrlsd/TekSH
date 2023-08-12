@@ -79,7 +79,7 @@ char *set_promt(void)
     char start = '[';
     char end = ']';
 
-    if (strcmp("UNDEFINE", getgit_branch()) != 0)
+    if (strcmp("UNDEFINED", getgit_branch()) != 0)
         sprintf(prompt, "\033[0;34m%c\033[1;31m%s\033[0m\033[0;34m%c %s", start, getgit_branch(), end, reset);
     else
         sprintf(prompt, " ");
@@ -114,6 +114,7 @@ void inthand(int32_t signum UNUSED_ARG)
 _wur int32_t
 prompt_shell(shell_t *shell)
 {
+    static char historyFilePath[256] = {0};
     char *line = DEFAULT(line);
     static int32_t first_call = true;
     struct termios old_termios, new_termios;
@@ -144,7 +145,8 @@ prompt_shell(shell_t *shell)
         rl_initialize();
         rl_extend_line_buffer(1024);
         first_call = false;
-        load_history("history.txt");
+        snprintf(historyFilePath, sizeof(historyFilePath), "%s/TekShistory.txt", get_home());
+        load_history(historyFilePath);
         rl_attempted_completion_function = command_completion;
     }
     
@@ -188,7 +190,7 @@ prompt_shell(shell_t *shell)
             add_history(line);
             shell->line = line;
             ENV_PATH = cut_path_env(ENV_SET_ARRAY);
-            save_history("history.txt");
+            save_history(historyFilePath);
         } else if (line) {
             print_str(detail, 0, RD_TTY, 1);
         }
