@@ -34,14 +34,20 @@ void set_unset_in_env(shell_t *shell, char **env, int32_t len_arg)
     int32_t i = DEFAULT(i);
     char *second_step = DEFAULT(second_step); char **arg = parse_stdin(shell->line);
     char **first_step =
-    (char**)_mallocbucket(sizeof(char *) * (len_array(env) + 2));
+    (char**)_mallocbucket(sizeof(char *) * len_array(env) + 2);
+
     i = function_set_param_env(i, env, first_step, shell);
 
     for (int32_t index = 0; env[index]; index++) {
         first_step = _str_to_word_array_custom
         (shell->set_env->env_array[index], '=');
+        if ((_strcmp(first_step[0], arg[1]) == 0) && len_arg == 3) {
+            _free(env[index]);
+            garbage_backup_bucket_ptr(set_unset_env_ext(index, arg, env, second_step));
+        }
         if ((_strcmp(first_step[0], arg[1]) == 0) && len_arg == 2) {
             arg[2] = " ";
+            _free(env[index]);
             set_unset_env_ext(index, arg, env, second_step);
         }
     }
@@ -49,7 +55,7 @@ void set_unset_in_env(shell_t *shell, char **env, int32_t len_arg)
 }
 
 void set_in_env_full(shell_t *shell UNUSED_ARG,
-                                    char **env,
+                                char **env,
                                 int32_t len_arg,
                                 int32_t in_env)
 {

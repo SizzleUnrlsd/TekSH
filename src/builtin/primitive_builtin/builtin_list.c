@@ -65,10 +65,12 @@ builtin_setenv(shell_t *shell)
 
     if (len_arg == 1) {
         print_array(shell->set_env->env_array, '\n');
-        UPDATE_SUCCESS_STATUS; return 0;
+        UPDATE_SUCCESS_STATUS;
+        return 0;
     }
     if (error_case_no_str_is_alpha(shell, len_arg) == 1) {
-        UPDATE_SUCCESS_STATUS; return 0;
+        UPDATE_SUCCESS_STATUS;
+        return 0;
     }
     if (len_arg != 1)
         already_in_env(shell, mode_builtin);
