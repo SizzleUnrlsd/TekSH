@@ -51,7 +51,7 @@ char *get_readme_from_github(const char* repo_owner, const char* repo_name)
         return NULL;
     }
     output[output_size] = '\0';
-    garbage_backup_ptr(output);
+    // garbage_backup_ptr(output);
     return output;
 }
 
@@ -149,7 +149,7 @@ check_version(void)
 {
 
     const char *version = DEFAULT(version);
-    const char *readme = DEFAULT(readme);
+    char *readme = DEFAULT(readme);
 
     /* If out of tty, disable update check. */
     if (!isatty(STDIN_FILENO)) {
@@ -172,5 +172,6 @@ check_version(void)
         update_services();
     }
 
+    free(readme);
     return;
 }
