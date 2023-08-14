@@ -53,7 +53,6 @@ void shell_engine(shell_t *shell, char **env)
         if (sigsetjmp(env_stack, 1) == 0) {
             ast_final(shell->line, shell);
             rl_cleanup_after_signal();
-            rl_free(shell->line);
             rl_free_line_state();
             garbage_routine();
         } else {
@@ -62,7 +61,6 @@ void shell_engine(shell_t *shell, char **env)
 #else
         ast_final(shell->line, shell);
         rl_cleanup_after_signal();
-        rl_free(shell->line);
         rl_free_line_state();
         garbage_routine();
 #endif
