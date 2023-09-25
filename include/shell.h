@@ -157,6 +157,7 @@
         _THREAD_ALLOCA_ERROR = 8,
         _PIPE_ERROR          = 9,
         _OVERLAPPING_ERROR   = 10,
+        _OPEN_ERROR          = 11,
     };
 
 #endif
@@ -221,6 +222,9 @@
                     break;                              \
                 case _OVERLAPPING_ERROR:                \
                     _str = "Overlapping Error";         \
+                    break;                              \
+                case _OPEN_ERROR:                       \
+                    _str = "Open error";                \
                     break;                              \
                 default:                                \
                     _str = "Unknown Error";             \
