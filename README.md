@@ -1,5 +1,5 @@
 # TekSH
-Version 1.80.9
+Version 1.82.8
 <img src="https://t.bkit.co/w_64925db39b56d.gif" />
 -----------------
 
@@ -35,7 +35,7 @@ cd Teksh && make
    ██║   ██╔══╝  ██╔═██╗ ╚════██║██╔══██║
    ██║   ███████╗██║  ██╗███████║██║  ██║
    ╚═╝   ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-1.80.9
+1.82.8
 
 ```
 
@@ -218,6 +218,9 @@ You can help by sharing this file in case of a bug.
 - [ ] Feat : autocomplete improvement, with git, docker (not finished), make
 - [ ] Style
 
+1.82.8
+- [ ] Improve : Improved memory allocator management : implementing garbage collector.
+- [ ] Fix : Fix memory errors due to garbage changes.
 
 ## Contributing
 
