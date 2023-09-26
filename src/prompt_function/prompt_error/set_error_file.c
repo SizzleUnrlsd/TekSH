@@ -24,8 +24,12 @@ saving_error_file(shell_t *shell)
 {
     const char *restrict path = "mini_dump/error_promt_cmd";
     const char *restrict mode = "a";
-    FILE* file = fopen(path, mode);
     char log[256] = {0};
+    FILE* file = fopen(path, mode);
+    if (!file) {
+        _p_error(_OPEN_ERROR);
+        exit(_OPEN_ERROR);
+    }
 
     sprintf(log, "%s/%s", shell->line, ARCH);
     fprintf(file, "%s\n", log);

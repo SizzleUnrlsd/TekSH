@@ -135,6 +135,7 @@
 
         /* PROMPT_TOOLS_ */
 
+    __attribute__((warn_unused_result)) int check_shell_line(char *line);
     void del_space_end_str(char *command);
     void delete_semicolon_end(char *command);
     void remove_backslash_n(char *command);

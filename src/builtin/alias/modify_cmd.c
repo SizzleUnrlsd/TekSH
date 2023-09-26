@@ -76,8 +76,8 @@ parse_aliases(call_alias_t *call_alias, char *cmd, char *cmp, char *new)
 char *
 format_alias_getline(shell_t *shell, char *cmd)
 {
-    uint32_t cpt = 0;
-    char *new_line = NULL;
+    uint32_t cpt = DEFAULT(cpt);
+    char *new_line = DEFAULT(new_line);
     char **arr_line = _str_to_word_array_custom(cmd, ' ');
 
     set_alias(shell->call_alias);

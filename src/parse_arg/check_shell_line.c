@@ -19,19 +19,12 @@
 
 #include "shell.h"
 
-void
-remove_backslash_n(char *command)
+__attribute__((warn_unused_result))
+inline int check_shell_line(char *line)
 {
-    uint32_t len_command = _strlen(command);
-
-    if (check_shell_line(command))
-        return;
-
-    if (len_command == 0)
-        return;
-    if (command[len_command - 1] == '\n') {
-        command[len_command - 1] = '\0';
-        len_command = len_command - 2;
+    if (!line || line == 0) {
+        return 1;
     }
-    return;
+
+    return 0;
 }

@@ -25,6 +25,9 @@ replace_multiple_spaces_tabulations(char *command)
     int32_t i = DEFAULT(i), j = DEFAULT(j);
     int32_t len = _strlen(command);
 
+    if (len == 0)
+        return;
+
     for (i = 0, j = 0; i < len; i++) {
         if ((command[i] == ' ' || command[i] == '\t')
         && (i == 0 || command[i - 1] == ' ' || command[i - 1] == '\t'))
