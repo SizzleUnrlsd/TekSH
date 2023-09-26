@@ -1,5 +1,5 @@
 # TekSH
-Version 1.82.8
+Version 1.83.9
 <img src="https://t.bkit.co/w_64925db39b56d.gif" />
 -----------------
 
@@ -35,7 +35,7 @@ cd Teksh && make
    ██║   ██╔══╝  ██╔═██╗ ╚════██║██╔══██║
    ██║   ███████╗██║  ██╗███████║██║  ██║
    ╚═╝   ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-1.82.8
+1.83.9
 
 ```
 
@@ -221,6 +221,12 @@ You can help by sharing this file in case of a bug.
 1.82.8
 - [ ] Improve : Improved memory allocator management : implementing garbage collector.
 - [ ] Fix : Fix memory errors due to garbage changes.
+
+1.83.9
+- [ ] Improve : Bug prevention.
+- [ ] Fix : Bug stream in relation to the use of tty.
+
+
 
 ## Contributing
 
