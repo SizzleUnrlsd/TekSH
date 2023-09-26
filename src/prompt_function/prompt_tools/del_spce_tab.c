@@ -25,6 +25,9 @@ delete_spaces_tabulations(char *command)
     int32_t i = DEFAULT(i), j = DEFAULT(j);
     int32_t len = _strlen(command);
 
+    if (check_shell_line(command))
+        return;
+
     for (i = 0; i < len && (command[i] == ' ' || command[i] == '\t'); i++);
 
     if (i > 0) {

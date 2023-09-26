@@ -24,6 +24,9 @@ remove_backslash_n(char *command)
 {
     uint32_t len_command = _strlen(command);
 
+    if (check_shell_line(command))
+        return;
+
     if (len_command == 0)
         return;
     if (command[len_command - 1] == '\n') {
