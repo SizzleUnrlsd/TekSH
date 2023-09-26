@@ -24,6 +24,9 @@ set_error_message(shell_t *shell, char first_char, char special_char, char *cont
 {
     uint32_t len_context = _strlen(context);
 
+    if (len_context == 0)
+        return 1;
+
     if (special_char == '|' || first_char == '|') {
         EXIT_W_ECHO_ERROR_("Invalid null command.", 1);
     }
@@ -93,6 +96,37 @@ formatting_brackets(char *command)
 
 }
 
+//tmp
+void
+del_into_line(char **command)
+{
+    char *line = DEFAULT(line);
+    uint32_t len = _strlen((*command));
+    uint32_t another_count = DEFAULT(another_count);
+
+    line = (char*)_mallocbucket(sizeof(char) * (len + 1));
+
+    for (uint32_t i = 0; (*command)[i]; ++i) {
+        if ((*command)[i + 1] != '\0' && (*command)[i] == ' ' && (*command)[i + 1] == ' ') {
+            (*command)[i] = '_';
+            continue;
+        }
+        if ((*command)[i + 1] != '\0' && (*command)[i] == '\t' && ((*command)[i + 1] == '\t' || (*command)[i + 1] == ' ')) {
+            (*command)[i] = '_';
+            continue;
+        }
+        line[another_count] = (*command)[i];
+        another_count++;
+    }
+    line[another_count] = '\0';
+
+    _free((*command));
+
+    (*command) = line;
+
+    return;
+}
+
 bool
 char_stream_formatting(shell_t *shell, char **command)
 {
@@ -101,6 +135,7 @@ char_stream_formatting(shell_t *shell, char **command)
 
     remove_backslash_n(*command);
     delete_spaces_tabulations(*command);
+    del_into_line(command);
     replace_multiple_spaces_tabulations(*command);
     del_space_end_str(*command);
     (*command) = formatting_brackets(*command);
