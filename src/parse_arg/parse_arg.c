@@ -58,7 +58,5 @@ parse_arg(int32_t ac, char **av)
         }
     }
 
-    
-
     return;
 }
