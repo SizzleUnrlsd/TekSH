@@ -33,7 +33,7 @@ shell_conf_t globalConfig;
 
 void shell_engine(shell_t *shell, char **env)
 {
-    char *new_line = DEFAULT(new_line);
+    char *restrict new_line = DEFAULT(new_line);
     call_alias_t *call_alias = DEFAULT(call_alias);
     shell_requirement(shell, env, &call_alias);
 
