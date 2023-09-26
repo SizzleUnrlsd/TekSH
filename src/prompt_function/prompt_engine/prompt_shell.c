@@ -124,13 +124,17 @@ prompt_shell(shell_t *shell)
     ssize_t read = DEFAULT(read);
 
     static int32_t screen_height = DEFAULT(screen_height), screen_width = DEFAULT(screen_width);
-    rl_get_screen_size(&screen_height, &screen_width);
-    rl_set_screen_size(1000, screen_height);
 
-    tcgetattr(STDIN_FILENO, &old_termios);
-    new_termios = old_termios;
-    new_termios.c_lflag &= ~ECHOCTL;
-    tcsetattr(STDIN_FILENO, TCSANOW, &new_termios);
+    if (shell->print && (screen_height == 0 || screen_width == 0)) {
+        rl_get_screen_size(&screen_height, &screen_width);
+        rl_set_screen_size(1000, screen_height);
+
+        tcgetattr(STDIN_FILENO, &old_termios);
+        new_termios = old_termios;
+        new_termios.c_lflag &= ~ECHOCTL;
+        tcsetattr(STDIN_FILENO, TCSANOW, &new_termios);
+    }
+
 
     _tty = shell->print;
     _gshell = shell;
@@ -167,6 +171,9 @@ prompt_shell(shell_t *shell)
             if (getline(&line, &len, stdin) == -1) {
                 exit(shell->status);
             }
+            if (strcmp(line, "\n") == 0)
+                exit(shell->status);
+            garbage_backup_ptr((void*)line);
         }
         /* In the tty */
         if (_tty) {
